@@ -3,7 +3,7 @@ Library-view.and.data.api-javascript
 
 This is a sample java script file providing functionality to :
 
-- upload a file
+- upload a file to bucket
 - start translation
 - check translation progress
 - load it in Viewer. 
