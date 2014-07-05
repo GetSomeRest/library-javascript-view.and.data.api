@@ -1,8 +1,8 @@
 ﻿//Change '3dViewDiv' to the Div id in your application that will be associated with the viewer
 var divid = '3dViewDiv';
 
-// Bucket to use for uploading the file.
-var bucketName = "mybucket";
+// Bucket to use for uploading the file
+var bucketName = null;
 
 var baseurl = "https://developer.api.autodesk.com";
 
@@ -102,18 +102,6 @@ function setToken() {
     xmlhttp.onerror = xmlHttpRequestErrorHandler;
     xmlhttp.withCredentials = true;
     xmlhttp.send("access-token=" + _accessToken);
-}
-
-// Creates a OSS Bucket that we can use to upload our design files prior to translation
-function createBucket() {
-    xmlhttp = new XMLHttpRequest();
-    xmlhttp.open('POST', baseurl + '/oss/v1/buckets', false);
-    xmlhttp.setRequestHeader('Content-Type', 'application/json');
-    xmlhttp.onreadystatechange = xmlHttpRequestHandler;
-    xmlhttp.onerror = xmlHttpRequestErrorHandler;
-    xmlhttp.withCredentials = true;
-    var tosend = "{\"bucketKey\":\"" + bucketName + "\", \"servicesAllowed\":{}, \"policy\":\"transient\"}";
-    xmlhttp.send(tosend);
 }
 
 // This function will be called periodically to check the status of the 
