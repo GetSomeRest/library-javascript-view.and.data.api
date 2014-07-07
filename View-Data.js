@@ -5,6 +5,7 @@ var divid = '3dViewDiv';
 var bucketName = null;
 
 var baseurl = "https://developer.api.autodesk.com";
+var env = 'AutodeskProduction';
 
 // File to upload
 var fileName2Upload = null;
@@ -35,15 +36,16 @@ function LoadViewerDocument() {
     var options = {
         'document': documentId,
         'accessToken': _accessToken,
-        'env': 'AutodeskProduction'
+        'env': env
     };
 
     Autodesk.Viewing.Initializer(options, function () {
         // Create a Viewer3D. 
         var viewer3DContainerDiv = htmlDoc.getElementById(divid);
 
-        viewer3D = new Autodesk.Viewing.BaseViewer3D(viewer3DContainerDiv, {});
-        
+        //viewer3D = new Autodesk.Viewing.BaseViewer3D(viewer3DContainerDiv, {});
+        viewer3D = new Autodesk.Viewing.Private.GuiViewer3D(viewer3DContainerDiv, {});
+
         // Initialize the viewer
         viewer3D.initialize();
 
@@ -86,10 +88,6 @@ function xmlHttpRequestHandler() {
     //{
     //  OK 
     //}
-}
-
-function xmlHttpRequestErrorHandler() {
-    //console.log(xmlhttp.responseText);
 }
 
 // This is expected to set the cookie upon server response
@@ -152,49 +150,41 @@ function uploadFile() {
     var f = fileName2Upload;
     var objkey = f.name;
     var url = baseurl + '/oss/v1/buckets/' + bucketName + '/objects/' + objkey;
+
     var headers = {
-        'Authorization': _accessToken,
+        'Authorization': 'Bearer ' + _accessToken,
         'Content-Type': f.type || 'application/stream'
     };
-
-    var xhr = new XMLHttpRequest();
-    if ("withCredentials" in xhr) {
-        xhr.open('PUT', url, true);
-        xhr.withCredentials = true;
+    xmlhttp = new XMLHttpRequest();
+    if ("withCredentials" in xmlhttp) {
+        xmlhttp.open('PUT', url, true);
+        xmlhttp.withCredentials = true;
         for (var h in headers) {
-            xhr.setRequestHeader(h, headers[h]);
+            xmlhttp.setRequestHeader(h, headers[h]);
         }
     }
 
-    xhr.onload = function () {
+    xmlhttp.onload = function () {
         // File uploaded to the bucket. 
         // To get the Base64URN of the OSS file urn from the OSS upload response
         // and POST a call to start translation process
-        StartTranslation(xhr.responseText);
+        StartTranslation(xmlhttp.responseText);
     };
 
-    xhr.onerror = function () { alert('Sorry, there was an error making the request.'); };
-    xhr.onprogress = updateProgress;
+    xmlhttp.onerror = xmlHttpRequestErrorHandler;
+    //function () { alert('Sorry, there was an error uploading the file.'); };
+
+    xmlhttp.onprogress = updateProgress;
 
     var reader = new FileReader();
 
     reader.onerror = errorHandler;
 
-    reader.onabort = function (e) {
-        alert('File read cancelled');
-    };
-
-    reader.onloadstart = function (e) {
-    };
-
-    reader.onload = function (e) {
-    }
-
     // FileReader completed reading the file
     reader.onloadend = function (evt) {
         if (evt.target.readyState == FileReader.DONE) {
             // Upload the file contents to the bucket
-            xhr.send(evt.target.result);
+            xmlhttp.send(evt.target.result);
         }
     };
 
@@ -252,8 +242,10 @@ function b64_to_utf8(str) {
 // Callback in case of error for http web request
 function xmlHttpRequestErrorHandler() {
     // Reset busy indicator
+    console.log(xmlhttp.responseText);
     normal();
 }
+
 
 function submittedRequestForTranslation() {
     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
