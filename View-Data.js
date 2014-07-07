@@ -303,19 +303,19 @@ function errorHandler(evt) {
 
     switch (evt.target.error.code) {
         case evt.target.error.NOT_FOUND_ERR:
-            UpdateCommandLine("FileReader error : File Not Found!");
+            console.log("FileReader error : File Not Found!");
             break;
 
         case evt.target.error.NOT_READABLE_ERR:
-            UpdateCommandLine("FileReader error : File is not readable");
+            console.log("FileReader error : File is not readable");
             break;
 
         case evt.target.error.ABORT_ERR:
-            UpdateCommandLine("FileReader error : Abort error");
+            console.log("FileReader error : Abort error");
             break;  // noop
 
         default:
-            UpdateCommandLine("FileReader error : Unknown error");
+            console.log("FileReader error : Unknown error");
             break;
     };
 }
