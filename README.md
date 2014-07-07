@@ -1,4 +1,4 @@
-#Library-view.and.data.api-javascript
+#Autodesk View and Data API JavaScript Utility Library
 
 Copyright &#169; Autodesk, Inc. All rights reserved.
 
