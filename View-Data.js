@@ -50,7 +50,7 @@ function LoadViewerDocument() {
         viewer3D.initialize();
 
         // Load the document and associate the document with our Viewer3D
-        Autodesk.Viewing.Document.load(documentId, Autodesk.Viewing.Private.getAuthObject(), onSuccessDocumentLoadCB, onErrorDocumentLoadCB);
+        Autodesk.Viewing.Document.load(documentId, null, onSuccessDocumentLoadCB, onErrorDocumentLoadCB);
     });
 }
 
