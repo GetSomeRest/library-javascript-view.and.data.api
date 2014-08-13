@@ -176,6 +176,11 @@
 
                                     console.log("Viewable: ");
                                     console.log(viewable);
+
+                                    var fileId = viewDataClient.fromBase64(
+                                        viewable.urn);
+
+                                    addThumbnail(fileId, response.file.name);
                                 });
                         }
                     },
@@ -187,6 +192,8 @@
                         console.log(error);
                     });
             }
+
+            files = [];
         }
 
         ///////////////////////////////////////////////////////////////////////////
@@ -262,6 +269,43 @@
         // 
         //
         ///////////////////////////////////////////////////////////////////////////
+        function addThumbnail(fileId, name) {
+
+            var parent = document.getElementById('thumbnails');
+
+            var img = document.createElement('img');
+
+            img.width = 128;
+            img.height = 128;
+
+            parent.appendChild(document.createElement('br'));
+            parent.appendChild(img);
+
+            var label = document.createElement('label');
+            label.innerHTML = '   ' + name;
+
+            parent.appendChild(label);
+
+            parent.appendChild(document.createElement('br'));
+
+            viewDataClient.getThumbnailAsync(
+               fileId,
+               function (data) {
+                   img.src = "data:image/png;base64," + data;
+               },
+               function (error) {
+
+                   console.log(
+                       'Error getting thumbnail for ' +
+                       fileId + ': '
+                       + error);
+               });
+        };
+
+        ///////////////////////////////////////////////////////////////////////////
+        // 
+        //
+        ///////////////////////////////////////////////////////////////////////////
         $().ready(function () {
 
             document.getElementById('fileInput').addEventListener(
@@ -317,9 +361,12 @@
         <strong>Output:</strong><br><br>
 
         <label id="output">
-        In the web console of your browser...
-        (We assume that if you are going to use a JavaScript API, you know how to use a browser console)
+        Traces are logged in the web console of your browser... Thumbnails of successful documents will be displayed below.
+        (We assume that if you are going to use a JavaScript API, you know how to use a browser console). 
         </label>
+        <br>
+        <div id="thumbnails">
+        </div>
     </div>
     
 </body>
