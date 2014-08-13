@@ -1,16 +1,18 @@
-#Autodesk View and Data API JavaScript Utility Library
+#Autodesk View and Data API JavaScript Wrapper Library
 
 
 ##Description
 
 *This sample is part of the [Developer-Autodesk/Autodesk-View-and-Data-API-Samples](https://github.com/Developer-Autodesk/autodesk-view-and-data-api-samples) repository.*
 
-This is a sample JavaScript file providing functions to :
+This sample is a JavaScript library providing a high level wrapper for the Autodesk View & Data Rest API calls:
 
+* Check existence of a bucket/Retrieve details of bucket 
+* Create new bucket
 * Upload a file to bucket
-* Start translation
+* Register file for translation
 * Check translation progress
-* Load it in Viewer. 
+* Retrieve viewable details
 
 ##Dependencies
 
@@ -18,25 +20,18 @@ None
 
 ##Setup/Usage Instructions
 
-* Include the JavaScriptfile in your project
-* Change 'divid' to associate an existing div in your project with the viewer
-* Change the bucket name to use for uploading files
-* The filename to upload and access token can be provided at runtime.
-* Optionally, you can implement the 'busy' and 'normal' functions to 
-  indicate background work-in-progress 
+* Include Autodesk.ADN.Toolkit.ViewData.js in your html project
+* Instantiate an AdnViewDataClient object
+* Invoke the methods on that client (demo html sample included)
   
-For an example of using this JavaScript file in an ASP.Net applicaton, please refer to the
-following work-flow sample:
-
-https://github.com/Developer-Autodesk/workflow-view-save-animate
 
 ## License
 
-workflow-curl-view.and.data.api is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT). Please see the [LICENSE](LICENSE) file for full details.
+library-javascript-view.and.data.api is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT). Please see the [LICENSE](LICENSE) file for full details.
 
 ##Written by 
 
-Balaji Ramamoorthy
+Balaji Ramamoorthy & Philippe Leefsma
 
 
 
