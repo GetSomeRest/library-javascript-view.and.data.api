@@ -16,11 +16,19 @@
 // UNINTERRUPTED OR ERROR FREE.
 ///////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////
+// Namespace declaration
+//
+///////////////////////////////////////////////////////////////////////////////
 var Autodesk = Autodesk || {};
 Autodesk.ADN = Autodesk.ADN || {};
 Autodesk.ADN.Toolkit = Autodesk.ADN.Toolkit || {};
 Autodesk.ADN.Toolkit.ViewData = Autodesk.ADN.Toolkit.ViewData || {};
 
+///////////////////////////////////////////////////////////////////////////////
+// Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient
+//
+///////////////////////////////////////////////////////////////////////////////
 Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     baseUrl,
     accessTokenOrUrl) {
@@ -50,7 +58,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
         _accessToken = xhr.responseText;
 
         return _accessToken;
-    }
+    };
 
     ///////////////////////////////////////////////////////////////////////////
     // Set the cookie upon server response
@@ -72,7 +80,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
         xhr.withCredentials = true;
         xhr.send("access-token=" + _accessToken);
-    }
+    };
 
     ///////////////////////////////////////////////////////////////////////////
     // Use: 
@@ -124,12 +132,13 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
             }
         }
 
-        xhr.onerror = function (error) {
-            onError(error);
+        try {
+            xhr.send(JSON.stringify(bucketCreationData));
         }
-
-        xhr.send(JSON.stringify(bucketCreationData));
-    }
+        catch (ex) {
+            onError(ex);
+        }
+    };
 
     ///////////////////////////////////////////////////////////////////////////
     // Use: 
@@ -175,12 +184,13 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
             }
         }
 
-        xhr.onerror = function (error) {
-            onError(error);
+        try {
+            xhr.send();
         }
-
-        xhr.send();
-    }
+        catch (ex) {
+            onError(ex);
+        }
+    };
 
     ///////////////////////////////////////////////////////////////////////////
     // Use: 
@@ -203,7 +213,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     //  }"
     ///////////////////////////////////////////////////////////////////////////
     this.uploadFileAsync = function (
-        file,      
+        file,
         bucketKey,
         objectKey,
         onSuccess,
@@ -230,10 +240,6 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
             onSuccess(response);
         };
 
-        xhr.onerror = function (error) {
-            onError(error);
-        }
-
         var reader = new FileReader();
 
         reader.onerror = onError;
@@ -241,7 +247,12 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
         reader.onloadend = function (event) {
             if (event.target.readyState == FileReader.DONE) {
-                xhr.send(event.target.result);
+                try {
+                    xhr.send(event.target.result);
+                }
+                catch (ex) {
+                    onError(ex);
+                }
             }
             else {
                 onError(event);
@@ -251,7 +262,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
         var blob = file.slice(0, file.size);
 
         reader.readAsArrayBuffer(blob);
-    }
+    };
 
     ///////////////////////////////////////////////////////////////////////////
     // Use: 
@@ -286,10 +297,16 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
             urn: this.toBase64(fileId)
         };
 
-        xhr.send(JSON.stringify(body));
+        try {
 
-        return JSON.parse(xhr.responseText);
-    }
+            xhr.send(JSON.stringify(body));
+
+            return JSON.parse(xhr.responseText);
+        }
+        catch (ex) {
+            return ex;
+        }
+    };
 
     ///////////////////////////////////////////////////////////////////////////
     // Use: 
@@ -311,9 +328,9 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
         height,
         guid) {
 
-        var parameters = 
-            '?width=' + (width ? width : '150') + 
-            '&height=' +(height ? height : '150') + 
+        var parameters =
+            '?width=' + (width ? width : '150') +
+            '&height=' + (height ? height : '150') +
             (guid ? '&guid=' + guid : '');
 
         var xhr = new XMLHttpRequest();
@@ -341,12 +358,13 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
             }
         };
 
-        xhr.onerror = function (error) {
-            onError(error);
+        try {
+            xhr.send();
         }
-
-        xhr.send();
-    }
+        catch (ex) {
+            onError(ex);
+        }
+    };
 
     ///////////////////////////////////////////////////////////////////////////
     // Use: 
@@ -397,26 +415,26 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
         var optionStr = "";
 
-        //switch (option)
-        //{ 
-        //    case ViewableOptionEnum.kStatus:
-        //        optionStr = "/status";
-        //        break;
+        switch (option) {
 
-        //    case ViewableOptionEnum.kAll:
-        //        optionStr = "/all";
-        //        break;
+            case 'status':
+                optionStr = "/status";
+                break;
 
-        //    default:
-        //        break;
-        //    }
+            case 'all':
+                optionStr = "/all";
+                break;
+
+            default:
+                break;
+        }
 
         var xhr = new XMLHttpRequest();
 
         xhr.open('GET',
             _baseUrl +
             "/viewingservice/v1/" +
-            this.toBase64(fileId) + 
+            this.toBase64(fileId) +
             optionStr +
             parameters,
             true);
@@ -431,12 +449,13 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
             }
         }
 
-        xhr.onerror = function (error) {
-            onError(error);
+        try {
+            xhr.send();
         }
-
-        xhr.send();
-    }
+        catch (ex) {
+            onError(ex);
+        }
+    };
 
     ///////////////////////////////////////////////////////////////////////////
     // Utilities
@@ -444,11 +463,11 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     ///////////////////////////////////////////////////////////////////////////
     this.toBase64 = function (str) {
         return window.btoa(unescape(encodeURIComponent(str)));
-    }
+    };
 
     this.fromBase64 = function (str) {
         return decodeURIComponent(escape(window.atob(str)));
-    }
+    };
 }
 
 
