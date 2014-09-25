@@ -475,6 +475,76 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     };
 
     ///////////////////////////////////////////////////////////////////////////
+    // Get subitems with properties
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    this.getSubItemsWithProperties = function (
+        fileId,
+        properties,
+        onSuccess,
+        onError) {
+
+        function hasProperties(item, properties) {
+
+            var hasProperties = true;
+
+            for(var propName in properties) {
+
+                if(!item.hasOwnProperty(propName)) {
+
+                    hasProperties = false;
+                    break;
+                }
+
+                if(item[propName] !== properties[propName]) {
+
+                    hasProperties = false;
+                    break;
+                }
+            }
+
+            return hasProperties;
+        }
+
+        function getSubItemsWithPropertiesRec(
+            viewable, properties) {
+
+            var items = [];
+
+            if(hasProperties(viewable, properties)) {
+
+                items.push(viewable);
+            }
+
+            if (typeof viewable.children !== 'undefined') {
+
+                for (var i=0; i<viewable.children.length; ++i) {
+
+                    var subItems = getSubItemsWithPropertiesRec(
+                        viewable.children[i], properties);
+
+                    items = items.concat(subItems);
+                }
+            }
+
+            return items;
+        }
+
+        this.getViewableAsync (
+            fileId,
+            function(viewable) {
+
+                var items = getSubItemsWithPropertiesRec(
+                    viewable,
+                    properties);
+
+                onSuccess(items);
+            },
+            onError,
+            'all');
+    };
+
+    ///////////////////////////////////////////////////////////////////////////
     // Utilities
     //
     ///////////////////////////////////////////////////////////////////////////
