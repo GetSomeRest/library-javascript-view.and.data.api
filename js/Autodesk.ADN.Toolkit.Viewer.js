@@ -30,7 +30,7 @@ Autodesk.ADN.Toolkit.Viewer = Autodesk.ADN.Toolkit.Viewer || {};
 //
 ///////////////////////////////////////////////////////////////////////////////
 Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
-    getToken,
+    tokenOrUrl,
     viewerContainer) {
 
     ///////////////////////////////////////////////////////////////////////////
@@ -53,6 +53,20 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     };
 
     ///////////////////////////////////////////////////////////////////////////
+    // Check if string is a valid url
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    var _validateURL = function (str) {
+
+        var urlregex = new RegExp(
+                "^(http|https|ftp)\:" +
+                "//[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(:[a-zA-Z0-9]*)?/" +
+                "?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$");
+
+        return urlregex.test(str);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
     // Private Members
     //
     ///////////////////////////////////////////////////////////////////////////
@@ -63,8 +77,6 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     var _viewerDivId = _newGUID();
 
     var _onGeometryLoadedCbs = [];
-
-    var _getToken = getToken;
 
     var _overlay = null;
 
@@ -101,17 +113,27 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
         var options = { env: "AutodeskProduction" };
 
-        // initialized with access token
-        if (typeof _getToken == 'string' || _getToken instanceof String) {
+        // initialized with getToken callback
+        if (_validateURL(tokenOrUrl)) {
 
-            options.accessToken = _getToken;
+            var getToken = function () {
+
+                var xhr = new XMLHttpRequest();
+
+                xhr.open("GET", tokenOrUrl, false);
+                xhr.send(null);
+
+                return xhr.responseText;
+            }
+
+            options.getAccessToken = getToken;
+            options.refreshToken = getToken;
         }
 
-        // initialized with getToken callback
+            // initialized with access token
         else {
 
-            options.getAccessToken = _getToken;
-            options.refreshToken = _getToken;
+            options.accessToken = tokenOrUrl;
         }
 
         var viewerElement = _createViewerElement(_viewerContainer);
@@ -121,7 +143,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
             _getViewablePath(
                 urn, null, function (path, role) {
 
-                    if (!path ) {
+                    if (!path) {
 
                         // error loading document
                         onError(role);
@@ -146,7 +168,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
                         _viewer.setQualityLevel(true, true);
                     }
 
-                    else if (role === '2d'){
+                    else if (role === '2d') {
 
                         _viewer = new Autodesk.Viewing.Private.GuiViewer2D(
                             viewerElement, {});
@@ -398,7 +420,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
             var table = document.getElementById(
                 "propertygrid");
 
-            if(table) {
+            if (table) {
 
                 if (table.rows.length !== 0) {
 
@@ -429,7 +451,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     //  ];
     //
     ///////////////////////////////////////////////////////////////////////////
-    this.insertProperties = function(properties, table) {
+    this.insertProperties = function (properties, table) {
 
         for (var i = 0; i < properties.length; ++i) {
 
@@ -524,7 +546,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
             explode += speed * 0.001 * watch.getElapsedMs();
 
-            if(explode > max) {
+            if (explode > max) {
 
                 explode = max;
                 speed = -speed;
@@ -543,7 +565,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
     this.stopExplodeMotion = function () {
 
-        if(_explodeMotion) {
+        if (_explodeMotion) {
 
             _explodeMotion = null;
 
@@ -577,7 +599,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
             var matrix = new THREE.Matrix4().makeRotationAxis(
                 rAxis,
-                speed * 0.001 * watch.getElapsedMs());
+                    speed * 0.001 * watch.getElapsedMs());
 
             position.applyMatrix4(matrix);
 
@@ -588,7 +610,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
     this.stopRotateMotion = function () {
 
-        if(_rotateMotion){
+        if (_rotateMotion) {
 
             _rotateMotion = null;
 
@@ -712,12 +734,12 @@ function Stopwatch() {
 
     var _startTime = new Date().getTime();
 
-    this.start = function (){
+    this.start = function () {
 
         _startTime = new Date().getTime();
     };
 
-    this.getElapsedMs = function(){
+    this.getElapsedMs = function () {
 
         var elapsedMs = new Date().getTime() - _startTime;
 
