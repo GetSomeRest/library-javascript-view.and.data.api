@@ -127,8 +127,13 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
           'application/json');
 
         xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                onSuccess(JSON.parse(xhr.responseText));
+            if (xhr.readyState == 4) {
+                if(xhr.status == 200) {
+                    onSuccess(JSON.parse(xhr.responseText));
+                }
+                else {
+                    onError(JSON.parse(xhr.responseText));
+                }
             }
         }
 
@@ -179,15 +184,22 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
           'application/json');
 
         xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                onSuccess(JSON.parse(xhr.responseText));
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    onSuccess(JSON.parse(xhr.responseText));
+                }
+                else {
+                    onError(JSON.parse(xhr.responseText));
+                }
             }
         }
 
-        try {
+        try
+        {
             xhr.send();
         }
-        catch (ex) {
+        catch (ex)
+        {
             onError(ex);
         }
     };
@@ -246,7 +258,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
         reader.onabort = onError;
 
         reader.onloadend = function (event) {
-            if (event.target.readyState == FileReader.DONE) {
+            if (event.target.readyState == FileReader.DONE) {           
                 try {
                     xhr.send(event.target.result);
                 }
@@ -444,8 +456,13 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
            'Bearer ' + _accessToken);
 
         xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                onSuccess(JSON.parse(xhr.responseText));
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    onSuccess(JSON.parse(xhr.responseText));
+                }
+                else {
+                    onError(JSON.parse(xhr.responseText));
+                }
             }
         }
 
