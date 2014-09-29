@@ -1,0 +1,45 @@
+<html>
+	
+    <link type="text/css" rel="stylesheet" href="https://viewing.api.autodesk.com/viewingservice/v1/viewers/style.css"/>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script  type="text/javascript" src="https://developer.api.autodesk.com/viewingservice/v1/viewers/viewer3D.js"></script>
+
+    <script type="text/javascript" src="js/Autodesk.ADN.Toolkit.Viewer.js"></script>
+
+<script>
+
+    var adnViewerMng;
+
+    function getToken() {
+
+        var tokenUrl = 'http://54.191.41.170:3000/api/token';
+
+        var xhr = new XMLHttpRequest();
+
+        xhr.open("GET", tokenUrl, false);
+        xhr.send(null);
+
+        return xhr.responseText;
+    }
+
+    $(document).ready(function () {
+
+        // creates new AdnViewerManager instance
+        adnViewerMng = new Autodesk.ADN.Toolkit.Viewer.AdnViewerManager(
+            getToken,
+            document.getElementById('ViewerDiv'));
+
+        // loads document
+        adnViewerMng.loadDocument(
+            "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6YWRuLTEwLjA3LjIwMTQtMTkuMDEuMzkvU2VhdC5kd2Y=");
+    });
+
+</script>
+ 
+<body>
+
+   <div id="ViewerDiv">     
+   </div>
+
+</body>
+</html>
