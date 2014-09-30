@@ -566,9 +566,8 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
         if(_explodeMotion) {
 
-            _explodeMotion = null;
-
             clearInterval(_explodeMotion);
+            _explodeMotion = null;
         }
     }
 
@@ -611,9 +610,8 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
         if(_rotateMotion){
 
-            _rotateMotion = null;
-
             clearInterval(_rotateMotion);
+            _rotateMotion = null;
         }
     }
 
