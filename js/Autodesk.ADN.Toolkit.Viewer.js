@@ -141,7 +141,9 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
                     if (!path ) {
 
                         // error loading document
-                        onError(role);
+                        if(onError)
+                            onError(role);
+
                         return;
                     }
 
@@ -181,10 +183,12 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
                         Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
                         _onGeometryLoaded);
 
-                    _viewer.load(path);
+                    _viewer.impl.setLightPreset(8);
 
                     if (onViewerInitialized)
                         onViewerInitialized(_viewer);
+
+                    _viewer.load(path);
 
                     _overlay = _createOverlay(viewerElement);
 
