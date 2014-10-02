@@ -156,7 +156,8 @@
                         var registerResponse =
                             viewDataClient.register(fileId);
 
-                        if (registerResponse.Result === "Success") {
+                        if (registerResponse.Result === "Success" ||
+                            registerResponse.Result === "Created") {
 
                             console.log("Registration result: " +
                                 registerResponse.Result);

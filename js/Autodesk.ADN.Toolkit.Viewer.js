@@ -80,6 +80,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     var _self = this;
 
     //Motion intervals
+
     var _explodeMotion = null;
 
     var _rotateMotion = null;
@@ -163,6 +164,8 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
                         _viewer.setProgressiveRendering(true);
 
                         _viewer.setQualityLevel(true, true);
+
+                        _viewer.impl.setLightPreset(8);
                     }
 
                     else if (role === '2d'){
@@ -183,17 +186,12 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
                         Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
                         _onGeometryLoaded);
 
-                    _viewer.impl.setLightPreset(8);
-
                     if (onViewerInitialized)
                         onViewerInitialized(_viewer);
 
                     _viewer.load(path);
 
                     _overlay = _createOverlay(viewerElement);
-
-                    //var circle = _overlay.circle(
-                    //    10, 10, 10);
                 });
         });
 
@@ -724,6 +722,48 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
             overlayDiv.clientHeight);
 
         return overlay;
+    }
+
+    this.startAnnotate = function () {
+
+        var circle = _overlay.circle(
+            0, 0, 5.0);
+
+        function getPosition(element) {
+
+            var x = 0;
+            var y = 0;
+
+            while (element) {
+
+                x += element.offsetLeft -
+                    element.scrollLeft +
+                    element.clientLeft;
+
+                y += element.offsetTop -
+                    element.scrollTop +
+                    element.clientTop;
+
+                element = element.offsetParent;
+            }
+
+            return { x: x, y: y };
+        }
+
+        var click = function(e) {
+
+            var parentPos = getPosition(e.currentTarget);
+
+            var x = e.clientX - parentPos.x;
+            var y = e.clientY - parentPos.y;
+
+            circle.attr({
+                cx: x,
+                cy: y
+            })
+        }
+
+        $("#" + _viewerDivId).bind( "click", click);
     }
 }
 
