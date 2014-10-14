@@ -556,5 +556,3 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
         return decodeURIComponent(escape(window.atob(str)));
     };
 }
-
-
