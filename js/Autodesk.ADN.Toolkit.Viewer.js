@@ -85,6 +85,8 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
     var _rotateMotion = null;
 
+    var _extensions = [];
+
     ///////////////////////////////////////////////////////////////////////////
     // Returns adsk viewer
     //
@@ -102,12 +104,24 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     };
 
     ///////////////////////////////////////////////////////////////////////////
+    // Adds an extension
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    this.addExtension = function (extension) {
+
+        _extensions.push(extension);
+    };
+
+    ///////////////////////////////////////////////////////////////////////////
     // Initialize Viewer and load document
     //
     ///////////////////////////////////////////////////////////////////////////
     this.loadDocument = function (urn, onViewerInitialized, onError) {
 
-        var options = { env: "AutodeskProduction" };
+        var options = {
+            env: "AutodeskProduction"
+            //env: "AutodeskStaging"
+        };
 
         // initialized with getToken callback
         if (_validateURL(tokenOrUrl)) {
@@ -157,9 +171,9 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
                         _viewer = new Autodesk.Viewing.Private.GuiViewer3D(
                             //_viewer = new Autodesk.Viewing.Viewer3D(
-                            viewerElement, {});
+                            viewerElement, { extensions: _extensions });
 
-                        _viewer.initialize();
+                        _viewer.start();
 
                         _viewer.setProgressiveRendering(true);
 
@@ -171,9 +185,9 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
                     else if (role === '2d'){
 
                         _viewer = new Autodesk.Viewing.Private.GuiViewer2D(
-                            viewerElement, {});
+                            viewerElement, { extensions: _extensions });
 
-                        _viewer.initialize();
+                        _viewer.start();
                     }
 
                     else {
@@ -243,7 +257,8 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
             position: _viewer.navigation.getPosition(),
             target: _viewer.navigation.getTarget(),
-            fov: _viewer.getFOV()
+            fov: _viewer.getFOV(),
+            up: _viewer.navigation.getCameraUpVector()
         };
 
         return view;
@@ -255,7 +270,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     ///////////////////////////////////////////////////////////////////////////
     this.setView = function (view) {
 
-        _viewer.navigation.setRequestTransition(
+        _viewer.navigation.setRequestTransitionWithUp(
             true,
 
             new THREE.Vector3(
@@ -268,7 +283,12 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
                 view.target.y,
                 view.target.z),
 
-            view.fov);
+            view.fov,
+
+            new THREE.Vector3(
+                view.up.x,
+                view.up.y,
+                view.up.z));
 
         _viewer.resize();
     };
