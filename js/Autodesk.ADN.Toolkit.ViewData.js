@@ -205,22 +205,22 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     };
 
     ///////////////////////////////////////////////////////////////////////////
-    // Use: 
+    // Use:
     // Upload a file to bucket
     //
-    // API: 
+    // API:
     // PUT /oss/{apiversion}/buckets/{bucketkey}/objects/{objectkey}
     //
     // Response:
     //
-    // "{   "bucket-key" : "adn-10.07.2014-11.28.15", 
-    //      "file": file, 
-    //      "objects" : [ {    
-    //          "location" : "baseUrl/oss/v1/buckets/bucketKey/objects/file.name",    
-    //          "size" : 1493911,    
-    //          "key" : "file.name",    
-    //          "id" : "urn:adsk.objects:os.object:bucketKey/file.name",    
-    //          "sha-1" : "ba824b22a6df9d0fc30943ffcf8129e2b9de80f6",   
+    // "{   "bucket-key" : "adn-10.07.2014-11.28.15",
+    //      "file": file,
+    //      "objects" : [ {
+    //          "location" : "baseUrl/oss/v1/buckets/bucketKey/objects/file.name",
+    //          "size" : 1493911,
+    //          "key" : "file.name",
+    //          "id" : "urn:adsk.objects:os.object:bucketKey/file.name",
+    //          "sha-1" : "ba824b22a6df9d0fc30943ffcf8129e2b9de80f6",
     //          "content-type" : "application/stream"  } ]
     //  }"
     ///////////////////////////////////////////////////////////////////////////
@@ -258,7 +258,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
         reader.onabort = onError;
 
         reader.onloadend = function (event) {
-            if (event.target.readyState == FileReader.DONE) {           
+            if (event.target.readyState == FileReader.DONE) {
                 try {
                     xhr.send(event.target.result);
                 }
