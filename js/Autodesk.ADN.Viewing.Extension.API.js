@@ -69,7 +69,8 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
                     position: this.navigation.getPosition(),
                     target: this.navigation.getTarget(),
                     fov: this.getFOV(),
-                    up: this.navigation.getCameraUpVector()
+                    up: this.navigation.getCameraUpVector(),
+                    explode: this.getExplodeScale()
                 };
 
                 return view;
@@ -82,6 +83,8 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
         Autodesk.Viewing.Viewer.prototype.setView =
 
             function (view) {
+
+                viewer.explode(view.explode);
 
                 this.navigation.setRequestTransitionWithUp(
                     true,
