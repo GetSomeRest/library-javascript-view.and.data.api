@@ -44,6 +44,16 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     _baseUrl = baseUrl;
 
     ///////////////////////////////////////////////////////////////////////////
+    // Check if string is a valid url
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    var _validateURL = function(str) {
+
+        return(str.indexOf('http:') > -1 || str.indexOf('https:') > -1);
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////
     // Get access token from the server
     //
     ///////////////////////////////////////////////////////////////////////////
@@ -78,7 +88,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
             'Content-Type',
             'application/x-www-form-urlencoded');
 
-        xhr.withCredentials = true;
+        //xhr.withCredentials = true;
         xhr.send("access-token=" + _accessToken);
     };
 
@@ -555,4 +565,25 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     this.fromBase64 = function (str) {
         return decodeURIComponent(escape(window.atob(str)));
     };
+
+
+
+
+
+    // Authenticat
+    if (_validateURL(accessTokenOrUrl)) {
+
+        _accessToken = this.getToken();;
+        
+    }
+
+    // initialized with access token
+    else {
+
+        _accessToken = accessTokenOrUrl;
+    }
+
+    this.setToken();
+
+
 }
