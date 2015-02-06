@@ -28,13 +28,8 @@ AutodeskNamespace("Autodesk.ADN.Toolkit.Viewer");
 ///////////////////////////////////////////////////////////////////////////////
 Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     tokenOrUrl,
-    viewerContainer,
-    enviroment) {
+    viewerContainer) {
 
-
-    if (!enviroment) {
-        enviroment = 'AutodeskProduction';
-    };
     ///////////////////////////////////////////////////////////////////////////
     // Check if string is a valid url
     //
@@ -79,7 +74,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
     ///////////////////////////////////////////////////////////////////////////
     // Returns adsk viewer
-    // Do not use this, use onViewerInitialized callback instead
+    //
     ///////////////////////////////////////////////////////////////////////////
     this.getViewer = function () {
 
@@ -93,9 +88,8 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     this.loadDocument = function (urn, onViewerInitialized, onError) {
 
         var options = {
-            //env: "AutodeskProduction"
+            env: "AutodeskProduction"
             //env: "AutodeskStaging"
-            env: enviroment
         };
 
         // initialized with getToken callback
@@ -108,10 +102,14 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
                 xhr.open("GET", tokenOrUrl, false);
                 xhr.send(null);
 
-                return xhr.responseText;
+                var response = JSON.parse(
+                    xhr.responseText);
+
+                return response.access_token;
             }
 
             options.getAccessToken = getToken;
+
             options.refreshToken = getToken;
         }
 

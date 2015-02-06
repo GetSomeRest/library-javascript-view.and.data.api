@@ -9,7 +9,7 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
 
     Autodesk.Viewing.Extension.call(this, viewer, options);
 
-    _self = this;
+    var _self = this;
 
     _self.load = function () {
 
@@ -186,21 +186,53 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
         //
         //
         ///////////////////////////////////////////////////////////////////////////
+        Autodesk.Viewing.Viewer.prototype.startMotionLoop =
+
+            function() {
+
+                if(this.hasOwnProperty("motionLoop"))
+                    return;
+
+                var viewer = this;
+
+                viewer.motionCallbacks = {};
+
+                var watch = new Stopwatch();
+
+                this.motionLoop = setInterval(function () {
+
+                    var elapsed = watch.getElapsedMs();
+
+                    for(var motion in viewer.motionCallbacks) {
+
+                        var callback = viewer.motionCallbacks[motion];
+
+                        callback(elapsed);
+                    }
+
+                }, 100);
+
+            }
+
+        ///////////////////////////////////////////////////////////////////////////
+        //
+        //
+        ///////////////////////////////////////////////////////////////////////////
         Autodesk.Viewing.Viewer.prototype.startExplodeMotion =
 
             function (speed, min, max) {
 
                 this.stopExplodeMotion();
 
+                this.startMotionLoop();
+
                 var viewer = this;
 
                 var scale = min;
 
-                var watch = new Stopwatch();
+                var explodeMotion = function (elapsed) {
 
-                this.explodeMotion = setInterval(function () {
-
-                    scale += speed * 0.001 * watch.getElapsedMs();
+                    scale += speed * 0.001 * elapsed;
 
                     if(scale > max) {
 
@@ -215,22 +247,21 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
                     }
 
                     viewer.explode(scale);
+                }
 
-                }, 100);
+                this.motionCallbacks['explode'] = explodeMotion;
             }
 
         Autodesk.Viewing.Viewer.prototype.stopExplodeMotion =
 
             function () {
 
-                if(this.hasOwnProperty("explodeMotion")){
+                if(this.hasOwnProperty("motionLoop")){
 
-                    clearInterval(this.explodeMotion);
+                    delete this.motionCallbacks['explode'];
+
+                    this.explode(0);
                 }
-
-                delete this.explodeMotion;
-
-                this.explode(0);
             }
 
         ///////////////////////////////////////////////////////////////////////////
@@ -243,11 +274,11 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
 
                 this.stopRotateMotion();
 
+                this.startMotionLoop();
+
                 var viewer = this;
 
-                var watch = new Stopwatch();
-
-                this.rotateMotion = setInterval(function () {
+                var rotateMotion = function (elapsed) {
 
                     var view = viewer.getCurrentView('animate');
 
@@ -263,25 +294,24 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
 
                     var matrix = new THREE.Matrix4().makeRotationAxis(
                         rAxis,
-                            speed * 0.001 * watch.getElapsedMs());
+                        speed * 0.001 * elapsed);
 
                     position.applyMatrix4(matrix);
 
                     viewer.navigation.setPosition(position);
+                };
 
-                }, 100);
+                this.motionCallbacks['rotate'] = rotateMotion;
             }
 
         Autodesk.Viewing.Viewer.prototype.stopRotateMotion =
 
             function () {
 
-                if(this.hasOwnProperty("rotateMotion")){
+                if(this.hasOwnProperty("motionLoop")){
 
-                    clearInterval(this.rotateMotion);
+                    delete this.motionCallbacks['rotate'];
                 }
-
-                delete this.rotateMotion;
             }
 
         return true;

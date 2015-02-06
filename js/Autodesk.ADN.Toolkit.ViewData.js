@@ -37,27 +37,17 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     // Private Members
     //
     ///////////////////////////////////////////////////////////////////////////
-    _acessTokenUrl = accessTokenOrUrl;
+    var _acessTokenUrl = accessTokenOrUrl;
 
-    _accessToken = accessTokenOrUrl;
+    var _accessToken = accessTokenOrUrl;
 
-    _baseUrl = baseUrl;
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Check if string is a valid url
-    //
-    ///////////////////////////////////////////////////////////////////////////
-    var _validateURL = function(str) {
-
-        return(str.indexOf('http:') > -1 || str.indexOf('https:') > -1);
-    }
-
+    var _baseUrl = baseUrl;
 
     ///////////////////////////////////////////////////////////////////////////
     // Get access token from the server
     //
     ///////////////////////////////////////////////////////////////////////////
-    this.getToken = function () {
+    var _requestToken = function () {
 
         var xhr = new XMLHttpRequest();
 
@@ -65,10 +55,16 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
         xhr.send(null);
 
-        _accessToken = xhr.responseText;
+        var response = JSON.parse(xhr.responseText);
 
-        return _accessToken;
+        setTimeout(
+            _requestToken,
+            response.expires_in * 1000);
+
+        _accessToken = response.access_token;
     };
+
+    _requestToken();
 
     ///////////////////////////////////////////////////////////////////////////
     // Set the cookie upon server response
@@ -88,7 +84,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
             'Content-Type',
             'application/x-www-form-urlencoded');
 
-        //xhr.withCredentials = true;
+        xhr.withCredentials = true;
         xhr.send("access-token=" + _accessToken);
     };
 
@@ -565,25 +561,4 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     this.fromBase64 = function (str) {
         return decodeURIComponent(escape(window.atob(str)));
     };
-
-
-
-
-
-    // Authenticat
-    if (_validateURL(accessTokenOrUrl)) {
-
-        _accessToken = this.getToken();;
-        
-    }
-
-    // initialized with access token
-    else {
-
-        _accessToken = accessTokenOrUrl;
-    }
-
-    this.setToken();
-
-
 }
