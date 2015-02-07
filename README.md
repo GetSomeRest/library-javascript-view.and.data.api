@@ -3,8 +3,6 @@
 
 ##Description
 
-*This sample is part of the [Developer-Autodesk/Autodesk-View-and-Data-API-Samples](https://github.com/Developer-Autodesk/autodesk-view-and-data-api-samples) repository.*
-
 This sample is a JavaScript library providing a high level wrapper for the Autodesk View & Data Rest API calls:
 
 * Check existence of a bucket/Retrieve details of bucket 
