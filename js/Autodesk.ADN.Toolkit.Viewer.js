@@ -28,7 +28,8 @@ AutodeskNamespace("Autodesk.ADN.Toolkit.Viewer");
 ///////////////////////////////////////////////////////////////////////////////
 Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     tokenOrUrl,
-    viewerContainer) {
+    viewerContainer,
+    environment) {
 
     ///////////////////////////////////////////////////////////////////////////
     // Check if string is a valid url
@@ -88,7 +89,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     this.loadDocument = function (urn, onViewerInitialized, onError) {
 
         var options = {
-            env: "AutodeskProduction"
+            env: (environment ? environment : "AutodeskProduction")
             //env: "AutodeskStaging"
         };
 
