@@ -27,10 +27,10 @@
 		<!-- Viewer -->
 		<link type="text/css" rel="stylesheet" href="https://developer.api.autodesk.com/viewingservice/v1/viewers/style.css"/>
 		<script src="https://developer.api.autodesk.com/viewingservice/v1/viewers/viewer3D.min.js"></script>
-		<script src="https://rawgit.com/Developer-Autodesk/library-javascript-view.and.data.api/master/js/Autodesk.ADN.Toolkit.Viewer.js"></script>
+		<script src="js/Autodesk.ADN.Toolkit.Viewer.js"></script>
 		<!-- <script src="https://rawgit.com/Developer-Autodesk/library-javascript-view.and.data.api/master/js/Autodesk.ADN.Viewing.Extension.API.js"></script> -->
 
-		<script src="https://rawgit.com/Developer-Autodesk/library-javascript-view.and.data.api/master/js/Autodesk.ADN.Viewing.Extension.SEO.js"></script>
+		<script src="js/Autodesk.ADN.Viewing.Extension.SEO.js"></script>
 
 		<script>
 		//replace with your own urn ...
@@ -38,7 +38,7 @@
 
 		$(document).ready(function () {
 			var adnViewerMng = new Autodesk.ADN.Toolkit.Viewer.AdnViewerManager(
-			'https://still-spire-1606.herokuapp.com/api/token',
+			'https://still-spire-1606.herokuapp.com/api/rawtoken',
 			document.getElementById('viewerDiv'));
 
 			var paramUrn = Autodesk.Viewing.Private.getParameterByName('urn');
