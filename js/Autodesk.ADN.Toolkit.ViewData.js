@@ -27,7 +27,14 @@ Autodesk.ADN.Toolkit.ViewData = Autodesk.ADN.Toolkit.ViewData || {};
 
 ///////////////////////////////////////////////////////////////////////////////
 // Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient
-//
+// Parameters:
+//      baseUrl: url of view and data API service, 
+//               for production environment, it is 'https://developer.api.autodesk.com'
+//      accessTokenOrUrl : 
+//          Opt 1: An access token in string, for example, 'Jp5wXTAiwfNSqYIktxxrJ3NPgtPP'
+//          Opt 2: An url which returns the access token string, 
+//              for example: http://still-spire-1606.herokuapp.com/api/token,
+//              it returns token string like 'Jp5wXTAiwfNSqYIktxxrJ3NPgtPP' 
 ///////////////////////////////////////////////////////////////////////////////
 Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     baseUrl,
@@ -38,16 +45,26 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     //
     ///////////////////////////////////////////////////////////////////////////
     var _acessTokenUrl = accessTokenOrUrl;
-
+    
     var _accessToken = accessTokenOrUrl;
 
     var _baseUrl = baseUrl;
 
     ///////////////////////////////////////////////////////////////////////////
+    // Check if string is a valid url
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    var _validateURL = function(str) {
+
+        return(str.indexOf('http:') > -1 || str.indexOf('https:') > -1);
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////
     // Get access token from the server
     //
     ///////////////////////////////////////////////////////////////////////////
-    var _requestToken = function () {
+    this.getToken = function () {
 
         var xhr = new XMLHttpRequest();
 
@@ -55,16 +72,10 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
         xhr.send(null);
 
-        var response = JSON.parse(xhr.responseText);
+        _accessToken = xhr.responseText;
 
-        setTimeout(
-            _requestToken,
-            response.expires_in * 1000);
-
-        _accessToken = response.access_token;
+        return _accessToken;
     };
-
-    _requestToken();
 
     ///////////////////////////////////////////////////////////////////////////
     // Set the cookie upon server response
@@ -84,7 +95,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
             'Content-Type',
             'application/x-www-form-urlencoded');
 
-        xhr.withCredentials = true;
+        //xhr.withCredentials = true;
         xhr.send("access-token=" + _accessToken);
     };
 
@@ -561,4 +572,25 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     this.fromBase64 = function (str) {
         return decodeURIComponent(escape(window.atob(str)));
     };
+
+
+
+
+
+    // Authenticat
+    if (_validateURL(accessTokenOrUrl)) {
+
+        _accessToken = this.getToken();;
+        
+    }
+
+    // initialized with access token
+    else {
+
+        _accessToken = accessTokenOrUrl;
+    }
+
+    this.setToken();
+
+
 }

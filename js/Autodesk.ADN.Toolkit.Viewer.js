@@ -25,6 +25,15 @@ AutodeskNamespace("Autodesk.ADN.Toolkit.Viewer");
 ///////////////////////////////////////////////////////////////////////////////
 // Autodesk.ADN.Toolkit.Viewer.AdnViewerManager
 //
+// Parameters:
+//      tokenOrUrl : 
+//          Opt 1: An access token in string, for example, 'Jp5wXTAiwfNSqYIktxxrJ3NPgtPP'
+//          Opt 2: An url which returns the access token string, 
+//              for example: http://still-spire-1606.herokuapp.com/api/token,
+//              it returns token string like 'Jp5wXTAiwfNSqYIktxxrJ3NPgtPP'
+//      viewerContainer : the html container of viewer
+//      environment(optional) :  it is 'AutodeskProduction' by default       
+//
 ///////////////////////////////////////////////////////////////////////////////
 Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     tokenOrUrl,
@@ -75,7 +84,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
     ///////////////////////////////////////////////////////////////////////////
     // Returns adsk viewer
-    //
+    // Do not use this, use onViewerInitialized callback instead
     ///////////////////////////////////////////////////////////////////////////
     this.getViewer = function () {
 
@@ -90,7 +99,6 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
         var options = {
             env: (environment ? environment : "AutodeskProduction")
-            //env: "AutodeskStaging"
         };
 
         // initialized with getToken callback
@@ -103,14 +111,10 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
                 xhr.open("GET", tokenOrUrl, false);
                 xhr.send(null);
 
-                var response = JSON.parse(
-                    xhr.responseText);
-
-                return response.access_token;
+                return xhr.responseText;
             }
 
             options.getAccessToken = getToken;
-
             options.refreshToken = getToken;
         }
 
