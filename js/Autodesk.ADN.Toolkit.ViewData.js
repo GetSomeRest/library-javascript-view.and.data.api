@@ -55,13 +55,22 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
         xhr.send(null);
 
-        var response = JSON.parse(xhr.responseText);
+        try {
 
-        setTimeout(
-            _requestToken,
-            response.expires_in * 1000);
+            var response = JSON.parse(xhr.responseText);
 
-        _accessToken = response.access_token;
+            setTimeout(
+                _requestToken,
+                response.expires_in * 1000);
+
+            _accessToken = response.access_token;
+        }
+        catch (ex) {
+
+            console.log('AdnViewDataClient error requesting token: ');
+            console.log(ex);
+            _accessToken = "";
+        }
     };
 
     _requestToken();
