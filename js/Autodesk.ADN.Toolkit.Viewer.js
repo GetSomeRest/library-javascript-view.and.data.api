@@ -90,8 +90,9 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
         var options = {
 
-            env: (config && config.environment ? environment : "AutodeskProduction")
-            //env: "AutodeskStaging"
+            env: (config && config.environment ?
+                config.environment : "AutodeskProduction")
+   
         };
 
         // initialized with getToken callback
