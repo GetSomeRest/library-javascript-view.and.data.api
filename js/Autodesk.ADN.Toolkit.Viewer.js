@@ -92,7 +92,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
             env: (config && config.environment ?
                 config.environment : "AutodeskProduction")
-   
+
         };
 
         // initialized with getToken callback
