@@ -145,9 +145,28 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
                     if (role === '3d' || role === '2d') {
 
-                        _viewer = new Autodesk.Viewing.Private.GuiViewer3D(
-                            //_viewer = new Autodesk.Viewing.Viewer3D(
-                            viewerElement);
+                        if(config && config.viewerType) {
+
+                            switch(config.viewerType) {
+                                case 'GuiViewer3D':
+                                    _viewer = new Autodesk.Viewing.Private.GuiViewer3D(
+                                        viewerElement);
+                                    break;
+                                case 'Viewer3D':
+                                    _viewer = new Autodesk.Viewing.Viewer3D(
+                                        viewerElement);
+                                    break;
+                                default:
+                                    _viewer = new Autodesk.Viewing.Private.GuiViewer3D(
+                                        viewerElement);
+                                    break;
+                            }
+                        }
+                        else {
+
+                            _viewer = new Autodesk.Viewing.Private.GuiViewer3D(
+                                viewerElement);
+                        }
 
                         _viewer.start();
 
