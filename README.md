@@ -33,8 +33,8 @@ None
 * Include relevant js files in your html project
 * See html sample files for example on how to use the libs:
 
-- Autodesk.ADN.Toolkit.ViewData.js: see view-data-wrapper-test.html
-- Autodesk.ADN.Toolkit.Viewer.js: see viewer-test.html
+    - Autodesk.ADN.Toolkit.ViewData.js: see view-data-wrapper-test.html
+    - Autodesk.ADN.Toolkit.Viewer.js: see viewer-test.html
 
 
 ## License
