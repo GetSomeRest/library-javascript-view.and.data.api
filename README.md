@@ -5,7 +5,7 @@
 
 This sample contains JavaScript libraries providing high level wrappers and features for the Autodesk View & Data API:
 
-Autodesk.ADN.Toolkit.ViewData.js
+- Autodesk.ADN.Toolkit.ViewData.js
 
 Provides a high-level wrapper to work with the View & Data REST API:
 
@@ -16,15 +16,16 @@ Provides a high-level wrapper to work with the View & Data REST API:
 * Check translation progress
 * Retrieve viewable details
 
+
+
 ##Dependencies
 
 None
 
 ##Setup/Usage Instructions
 
-* Include Autodesk.ADN.Toolkit.ViewData.js in your html project
-* Instantiate an AdnViewDataClient object
-* Invoke the methods on that client (demo html sample included)
+* Include relevant js files in your html project
+* See html sample files for example on how to use the libs
   
 
 ## License
