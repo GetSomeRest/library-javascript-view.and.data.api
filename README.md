@@ -3,7 +3,11 @@
 
 ##Description
 
-This sample is a JavaScript library providing a high level wrapper for the Autodesk View & Data Rest API calls:
+This sample contains JavaScript libraries providing high level wrappers and features for the Autodesk View & Data API:
+
+Autodesk.ADN.Toolkit.ViewData.js
+
+Provides a high-level wrapper to work with the View & Data REST API:
 
 * Check existence of a bucket/Retrieve details of bucket 
 * Create new bucket
