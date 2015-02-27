@@ -64,6 +64,15 @@ None
                 console.log(error);
             };
 
+    - Autodesk.ADN.Viewing.Extension.APIjs: no html sample, but quite straightforward to use
+
+            // Once the viewer has been set up, you can load the extension
+            // which will add extra functions to the viewer object
+            viewer.loadExtension('Autodesk.ADN.Viewing.Extension.API');
+
+            // Now you can start using those extra functions
+            // E.g. startExplodeMotion(speed, min, max)
+            viewer.startExplodeMotion(0.5, 0, 1);
 
 ## License
 
