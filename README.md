@@ -9,13 +9,14 @@ This sample contains JavaScript libraries providing high level wrappers and feat
 
 Provides a high-level wrapper to work with the View & Data REST API:
 
-* Check existence of a bucket/Retrieve details of bucket 
+** Check existence of a bucket/Retrieve details of bucket
 * Create new bucket
 * Upload a file to bucket
 * Register file for translation
 * Check translation progress
 * Retrieve viewable details
 
+- Autodesk.ADN.Toolkit.ViewData.js
 
 
 ##Dependencies
