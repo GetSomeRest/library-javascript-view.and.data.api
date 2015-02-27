@@ -43,7 +43,7 @@ library-javascript-view.and.data.api is licensed under the terms of the [MIT Lic
 
 ##Written by 
 
-Balaji Ramamoorthy & Philippe Leefsma
+[Balaji Ramamoorthy](http://adndevblog.typepad.com/autocad/balaji-ramamoorthy.html) & [Philippe Leefsma](http://adndevblog.typepad.com/cloud_and_mobile/philippe-leefsma.html)
 
 
 
