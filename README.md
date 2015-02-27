@@ -34,7 +34,34 @@ None
 * See html sample files for example on how to use the libs:
 
     - Autodesk.ADN.Toolkit.ViewData.js: see view-data-wrapper-test.html
-    - Autodesk.ADN.Toolkit.Viewer.js: see viewer-test.html
+    
+    - Autodesk.ADN.Toolkit.Viewer.js: see viewer-test.html for a complete example
+
+        $(document).ready(function () {
+
+            var config = {
+
+                environment : 'AutodeskProduction' // 'AutodeskProduction' | 'AutodeskStaging'
+                viewerType: '' //'GuiViewer3D' | 'Viewer3D'
+            }
+
+            var adnViewerMng = new Autodesk.ADN.Toolkit.Viewer.AdnViewerManager(
+                tokenurl,  // url of your token service (ex reply: {token_type: "Bearer", expires_in: 1799, access_token: "..."}
+                document.getElementById('viewerDiv'), //viewer div id
+                config);
+
+            adnViewerMng.loadDocument(urn, onViewerInitialized, onError);
+        });
+
+        function onViewerInitialized(viewer)
+        {
+            console.log('Viewer initialized');
+        };
+
+        function onError(error)
+        {
+            console.log(error);
+        };
 
 
 ## License
