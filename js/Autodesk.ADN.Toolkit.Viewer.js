@@ -25,6 +25,15 @@ AutodeskNamespace("Autodesk.ADN.Toolkit.Viewer");
 ///////////////////////////////////////////////////////////////////////////////
 // Autodesk.ADN.Toolkit.Viewer.AdnViewerManager
 //
+// Parameters:
+//      tokenOrUrl :  An url which returns the access token in JSON foramt, 
+//              for example: http://still-spire-1606.herokuapp.com/api/rawtoken,
+//              it returns token  like :
+//                  {"token_type":"Bearer",
+//                   "expires_in":1799,
+//                    "access_token":"nTeOdsiNRckNbiBF7lzdEZ3yjHRx"} 
+//      viewerContainer : the html container of viewer
+//      environment(optional) :  it is 'AutodeskProduction' by default 
 ///////////////////////////////////////////////////////////////////////////////
 Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     tokenOrUrl,
