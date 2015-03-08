@@ -44,9 +44,9 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     // Check if string is a valid url
     //
     ///////////////////////////////////////////////////////////////////////////
-    var _validateURL = function(str) {
+    var _validateURL = function (str) {
 
-        return(str.indexOf('http:') > -1 || str.indexOf('https:') > -1);
+        return (str.indexOf('http:') > -1 || str.indexOf('https:') > -1);
     }
 
     var _newGuid = function () {
@@ -70,17 +70,20 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     ///////////////////////////////////////////////////////////////////////////
     var _viewerDivId = _newGuid();
 
-    var _viewerContainer = viewerContainer;
-
     var _viewer = null;
 
     var _self = this;
 
-    //Motion intervals
+    //fit view on escape
+    $(document).keyup(function (e) {
+        // esc
+        if (e.keyCode == 27) {
 
-    var _explodeMotion = null;
-
-    var _rotateMotion = null;
+            if(_viewer) {
+                _viewer.fitToView(false);
+            }
+        }
+    });
 
     ///////////////////////////////////////////////////////////////////////////
     // Returns adsk viewer
@@ -97,17 +100,113 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     ///////////////////////////////////////////////////////////////////////////
     this.loadDocument = function (urn, onViewerInitialized, onError) {
 
+        _self.getViewablePath(
+
+            urn, function (path, error) {
+
+                if (!path) {
+
+                    // error loading document
+                    if (onError)
+                        onError(error);
+
+                    return;
+                }
+
+                _viewer = _createViewer();
+
+                if (onViewerInitialized)
+                    onViewerInitialized(_viewer);
+
+                if (path.path3d.length > 0) {
+                    _viewer.load(path.path3d[0]);
+                }
+                else if (path.path2d.length > 0) {
+                    _viewer.load(path.path2d[0]);
+                }
+            })
+    };
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Get 2d and 3d viewable path
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    this.getViewablePath = function (documentId, callback) {
+
+        var option = _initializeOptions();
+
+        Autodesk.Viewing.Initializer(options, function () {
+
+            if (documentId.indexOf('urn:') !== 0)
+                documentId = 'urn:' + documentId;
+
+            Autodesk.Viewing.Document.load(
+                documentId,
+                function (document) {
+
+                    var path = {
+
+                        path2d: [],
+                        path3d: []
+                    }
+
+                    var items2d = Autodesk.Viewing.Document.getSubItemsWithProperties(
+                        document.getRootItem(),
+                        { 'type': 'geometry', 'role': '2d' },
+                        true);
+
+                    for (var i =0; i<items.length; ++i) {
+
+                        path.path2d.push(document.getViewablePath(items[i]));
+                    }
+
+                    var items3d = Autodesk.Viewing.Document.getSubItemsWithProperties(
+                        document.getRootItem(),
+                        { 'type': 'geometry', 'role': '3d' },
+                        true);
+
+                    for (var i =0; i<items.length; ++i) {
+
+                        path.path3d.push(document.getViewablePath(items[i]));
+                    }
+
+                    callback(path);
+                },
+                function (error) {
+                    console.log("Error loading document: " + error)
+                    callback(null, error);
+                }
+            );
+        });
+    };
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Close current document if any
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    this.closeDocument = function () {
+
+        $('#' + _viewerDivId).remove();
+
+        _viewer = null;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Initializes options
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    function _initializeOptions() {
+
         var options = {
 
             env: (config && config.environment ?
                 config.environment : "AutodeskProduction")
-
         };
 
         // initialized with getToken callback
         if (_validateURL(tokenOrUrl)) {
 
-            var getToken =  function() {
+            var getToken = function () {
 
                 var xhr = new XMLHttpRequest();
 
@@ -131,131 +230,24 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
             options.accessToken = tokenOrUrl;
         }
 
-        var viewerElement = _createViewerElement(_viewerContainer);
-
-        Autodesk.Viewing.Initializer(options, function () {
-
-            _getViewablePath(
-                urn, null, function (path, role) {
-
-                    if (!path ) {
-
-                        // error loading document
-                        if(onError)
-                            onError(role);
-
-                        return;
-                    }
-
-                    if (_viewer) {
-
-                        _viewer.finish();
-                    }
-
-                    if (role === '3d' || role === '2d') {
-
-                        if(config && config.viewerType) {
-
-                            switch(config.viewerType) {
-                                case 'GuiViewer3D':
-                                    _viewer = new Autodesk.Viewing.Private.GuiViewer3D(
-                                        viewerElement);
-                                    break;
-                                case 'Viewer3D':
-                                    _viewer = new Autodesk.Viewing.Viewer3D(
-                                        viewerElement);
-                                    break;
-                                default:
-                                    _viewer = new Autodesk.Viewing.Private.GuiViewer3D(
-                                        viewerElement);
-                                    break;
-                            }
-                        }
-                        else {
-
-                            _viewer = new Autodesk.Viewing.Private.GuiViewer3D(
-                                viewerElement);
-                        }
-
-                        _viewer.start();
-
-                        _viewer.setProgressiveRendering(true);
-
-                        _viewer.setQualityLevel(true, true);
-
-                        _viewer.impl.setLightPreset(8);
-
-                        _viewer.setBackgroundColor(3,4,5, 250, 250, 250);
-                    }
-
-                    else {
-
-                        //error
-                        return;
-                    }
-
-                    _viewer.addEventListener(
-
-                        Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
-
-                        function(event) {
-                            _viewer.fitToView(false);
-                        });
-
-                    if (onViewerInitialized)
-                        onViewerInitialized(_viewer);
-
-                    _viewer.load(path);
-                });
-        });
-
-        //fit view on escape
-        $(document).keyup(function (e) {
-            // esc
-            if (e.keyCode == 27) {
-                _viewer.fitToView(false);
-            }
-        });
-    };
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Close current document if any
-    //
-    ///////////////////////////////////////////////////////////////////////////
-    this.closeDocument = function () {
-
-        var viewerDiv = document.getElementById(_viewerDivId);
-
-        if (viewerDiv) {
-
-            viewerDiv.parentNode.removeChild(viewerDiv);
-        }
-
-        _viewer = null;
+        return options;
     }
 
     ///////////////////////////////////////////////////////////////////////////
     // Creates new viewer div element
     //
     ///////////////////////////////////////////////////////////////////////////
-    var _createViewerElement = function (viewerContainer) {
+    var _createViewerDiv = function (container) {
 
-        var viewerDiv = document.getElementById(
-            _viewerDivId);
+        $('#' + _viewerDivId).remove();
 
-        if (viewerDiv) {
-
-            viewerDiv.parentNode.removeChild(
-                viewerDiv);
-        }
-
-        viewerDiv = document.createElement("div");
+        var viewerDiv = document.createElement("div");
 
         viewerDiv.id = _viewerDivId;
 
         viewerDiv.style.height = "100%";
 
-        viewerContainer.appendChild(viewerDiv);
+        container.appendChild(viewerDiv);
 
         // disable default context menu on viewer div 
         $('#' + _viewerDivId).on('contextmenu',
@@ -282,64 +274,297 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     };
 
     ///////////////////////////////////////////////////////////////////////////
-    // Get 2d or 3d viewable path
+    //
     //
     ///////////////////////////////////////////////////////////////////////////
-    var _getViewablePath = function (documentId, initialItemId, callback) {
+    var _createViewer = function () {
 
-        if (documentId.indexOf('urn:') !== 0)
-            documentId = 'urn:' + documentId;
+        if (_viewer) {
 
-        Autodesk.Viewing.Document.load(
-            documentId,
-            function (document) {
+            _viewer.finish();
 
-                var items = [];
+            _viewer = null;
+        }
 
-                if (initialItemId) {
-                    items = Autodesk.Viewing.Document.getSubItemsWithProperties(
-                        document.getRootItem(),
-                        { 'guid': initialItemId },
-                        true);
-                }
+        var viewer = null;
 
-                if (items.length == 0) {
+        var viewerDiv = _createViewerDiv(viewerContainer);
 
-                    items = Autodesk.Viewing.Document.getSubItemsWithProperties(
-                        document.getRootItem(),
-                        { 'type': 'geometry', 'role': '2d' },
-                        true);
+        if(config && config.viewerType) {
 
-                    if (items.length > 0) {
-
-                        var path2d = document.getViewablePath(items[0]);
-
-                        callback(path2d, '2d');
-                        return;
-                    }
-                }
-
-                if (items.length == 0) {
-
-                    items = Autodesk.Viewing.Document.getSubItemsWithProperties(
-                        document.getRootItem(),
-                        { 'type': 'geometry', 'role': '3d' },
-                        true);
-
-                    if (items.length > 0) {
-
-                        var path3d = document.getViewablePath(items[0]);
-
-                        callback(path3d, '3d');
-                        return;
-                    }
-                }
-            },
-            function (error) {
-                console.log("Error loading document: " + error)
-                callback(null, error);
+            switch(config.viewerType) {
+                case 'GuiViewer3D':
+                    viewer = new Autodesk.Viewing.Private.GuiViewer3D(
+                        viewerDiv);
+                    break;
+                case 'Viewer3D':
+                    viewer = new Autodesk.Viewing.Viewer3D(
+                        viewerDiv);
+                    break;
+                default:
+                    viewer = new Autodesk.Viewing.Private.GuiViewer3D(
+                        viewerDiv);
+                    break;
             }
-        );
-    };
+        }
+        else {
+
+            viewer = new Autodesk.Viewing.Private.GuiViewer3D(
+                viewerDiv);
+        }
+
+        viewer.start();
+
+        viewer.setProgressiveRendering(true);
+
+        viewer.setQualityLevel(true, true);
+
+        viewer.impl.setLightPreset(8);
+
+        viewer.setBackgroundColor(3,4,5, 250, 250, 250);
+
+        viewer.addEventListener(
+
+            Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
+
+            function(event) {
+
+                viewer.fitToView(false);
+            });
+
+        return viewer;
+    }
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory
+//
+///////////////////////////////////////////////////////////////////////////////
+Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
+    tokenOrUrl,
+    config) {
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Check if string is a valid url
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    var _validateURL = function (str) {
+
+        return (str.indexOf('http:') > -1 || str.indexOf('https:') > -1);
+    }
+
+    var _newGuid = function () {
+
+        var d = new Date().getTime();
+
+        var guid = 'xxxx-xxxx-xxxx-xxxx-xxxx'.replace(
+            /[xy]/g,
+            function (c) {
+                var r = (d + Math.random() * 16) % 16 | 0;
+                d = Math.floor(d / 16);
+                return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
+            });
+
+        return guid;
+    };
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Private Members
+    //
+    ///////////////////////////////////////////////////////////////////////////
+
+    var _self = this;
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Get 2d and 3d viewable path
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    this.getViewablePath = function (urn, onSuccess, onError) {
+
+        var options = _initializeOptions();
+
+        Autodesk.Viewing.Initializer(options, function () {
+
+            if (urn.indexOf('urn:') !== 0)
+                urn = 'urn:' + urn;
+
+            Autodesk.Viewing.Document.load(
+                urn,
+                function (document) {
+
+                    var pathCollection = {
+
+                        path2d: [],
+                        path3d: []
+                    }
+
+                    var items2d = Autodesk.Viewing.Document.getSubItemsWithProperties(
+                        document.getRootItem(),
+                        {
+                            'type': 'geometry',
+                            'role': '2d'
+                        },
+                        true);
+
+                    for (var i =0; i<items2d.length; ++i) {
+
+                        pathCollection.path2d.push(
+                            document.getViewablePath(items2d[i]));
+                    }
+
+                    var items3d = Autodesk.Viewing.Document.getSubItemsWithProperties(
+                        document.getRootItem(),
+                        {
+                            'type': 'geometry',
+                            'role': '3d'
+                        },
+                        true);
+
+                    for (var i =0; i<items3d.length; ++i) {
+
+                        pathCollection.path3d.push(
+                            document.getViewablePath(items3d[i]));
+                    }
+
+                    onSuccess(pathCollection);
+                },
+                function (error) {
+
+                    onError(error);
+                }
+            );
+        });
+    };
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Initializes options
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    function _initializeOptions() {
+
+        var options = {
+
+            env: (config && config.environment ?
+                config.environment : "AutodeskProduction")
+        };
+
+        // initialized with getToken callback
+        if (_validateURL(tokenOrUrl)) {
+
+            var getToken = function () {
+
+                var xhr = new XMLHttpRequest();
+
+                xhr.open("GET", tokenOrUrl, false);
+                xhr.send(null);
+
+                var response = JSON.parse(
+                    xhr.responseText);
+
+                return response.access_token;
+            }
+
+            options.getAccessToken = getToken;
+
+            options.refreshToken = getToken;
+        }
+
+        // initialized with access token
+        else {
+
+            options.accessToken = tokenOrUrl;
+        }
+
+        return options;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Creates new viewer div element
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    var _createViewerDiv = function (container) {
+
+        var id = _newGuid();
+
+        var viewerDiv = document.createElement("div");
+
+        viewerDiv.id = id;
+
+        viewerDiv.style.height = "100%";
+
+        container.appendChild(viewerDiv);
+
+        // disable default context menu on viewer div
+        $('#' + id).on('contextmenu',
+            function (e) {
+                e.preventDefault();
+            });
+
+        // disable scrolling on DOM document
+        // while mouse pointer is over viewer area
+        $('#' + id).hover(
+            function () {
+                var x = window.scrollX;
+                var y = window.scrollY;
+                window.onscroll = function () {
+                    window.scrollTo(x, y);
+                };
+            },
+            function () {
+                window.onscroll = null;
+            }
+        );
+
+        return viewerDiv;
+    };
+
+    ///////////////////////////////////////////////////////////////////////////
+    //
+    //
+    ///////////////////////////////////////////////////////////////////////////
+    this.createViewer = function (container, viewerConfig) {
+
+        var viewer = null;
+
+        var viewerDiv = _createViewerDiv(container);
+
+        var viewerType = (viewerConfig ?
+            (config.viewerType ?
+                config.viewerType :
+                'GuiViewer3D') :
+            'GuiViewer3D');
+
+        switch(viewerType) {
+            case 'GuiViewer3D':
+                viewer = new Autodesk.Viewing.Private.GuiViewer3D(
+                    viewerDiv);
+                break;
+            case 'Viewer3D':
+                viewer = new Autodesk.Viewing.Viewer3D(
+                    viewerDiv);
+                break;
+
+        }
+
+        viewer.start();
+
+        viewer.setProgressiveRendering(true);
+
+        viewer.setQualityLevel(true, true);
+
+        viewer.impl.setLightPreset(8);
+
+        viewer.setBackgroundColor(3,4,5, 250, 250, 250);
+
+        viewer.addEventListener(
+
+            Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
+
+            function(event) {
+
+                viewer.fitToView(false);
+            });
+
+        return viewer;
+    }
+}
