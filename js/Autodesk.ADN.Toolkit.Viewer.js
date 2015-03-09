@@ -155,9 +155,9 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
                         { 'type': 'geometry', 'role': '2d' },
                         true);
 
-                    for (var i =0; i<items.length; ++i) {
+                    for (var i =0; i<items2d.length; ++i) {
 
-                        path.path2d.push(document.getViewablePath(items[i]));
+                        path.path2d.push(document.getViewablePath(items2d[i]));
                     }
 
                     var items3d = Autodesk.Viewing.Document.getSubItemsWithProperties(
@@ -165,9 +165,9 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
                         { 'type': 'geometry', 'role': '3d' },
                         true);
 
-                    for (var i =0; i<items.length; ++i) {
+                    for (var i =0; i<items3d.length; ++i) {
 
-                        path.path3d.push(document.getViewablePath(items[i]));
+                        path.path3d.push(document.getViewablePath(items3d[i]));
                     }
 
                     callback(path);
