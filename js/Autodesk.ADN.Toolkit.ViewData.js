@@ -40,7 +40,8 @@ Autodesk.ADN.Toolkit.ViewData = Autodesk.ADN.Toolkit.ViewData || {};
 ///////////////////////////////////////////////////////////////////////////////
 Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     baseUrl,
-    accessTokenOrUrl) {
+    accessTokenOrUrl,
+    onTokenInitialized) {
 
     ///////////////////////////////////////////////////////////////////////////
     // Private Members
@@ -56,33 +57,58 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     // Get access token from the server
     //
     ///////////////////////////////////////////////////////////////////////////
-    var _requestToken = function () {
+    var _requestTokenAsync = function (onSuccess, onError) {
 
         var xhr = new XMLHttpRequest();
 
-        xhr.open("GET", _acessTokenUrl, false);
+        xhr.open("GET", _acessTokenUrl, true);
 
-        xhr.send(null);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+
+                    try {
+
+                        var response = JSON.parse(xhr.responseText);
+
+                        onSuccess(response);
+                    }
+                    catch (ex) {
+
+                        _accessToken = "";
+                    }
+                }
+                else {
+                    onError(JSON.parse(xhr.responseText));
+                }
+            }
+        }
 
         try {
 
-            var response = JSON.parse(xhr.responseText);
-
-            setTimeout(
-                _requestToken,
-                response.expires_in * 1000);
-
-            _accessToken = response.access_token;
+            xhr.send(null);
         }
         catch (ex) {
-
-            console.log('AdnViewDataClient error requesting token: ');
-            console.log(ex);
-            _accessToken = "";
+            onError(ex);
         }
     };
 
-    _requestToken();
+    _requestTokenAsync(function(response){
+
+        setTimeout(_requestTokenAsync,
+            response.expires_in * 1000);
+
+            _accessToken = response.access_token;
+
+        if(onTokenInitialized) {
+            onTokenInitialized(response);
+        }
+
+    }, function(error) {
+
+        console.log('AdnViewDataClient error requesting token: '  + error)
+    });
+
 
     ///////////////////////////////////////////////////////////////////////////
     // Set the cookie upon server response
@@ -140,7 +166,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
         xhr.open('POST',
             _baseUrl + "/oss/v1/buckets",
-            false);
+            true);
 
         xhr.setRequestHeader(
            'Authorization',
@@ -197,7 +223,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
         xhr.open('GET',
             _baseUrl + "/oss/v1/buckets/" + bucketKey + "/details",
-            false);
+            true);
 
         xhr.setRequestHeader(
            'Authorization',

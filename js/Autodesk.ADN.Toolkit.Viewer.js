@@ -133,7 +133,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     ///////////////////////////////////////////////////////////////////////////
     this.getViewablePath = function (documentId, callback) {
 
-        var option = _initializeOptions();
+        var options = _initializeOptions();
 
         Autodesk.Viewing.Initializer(options, function () {
 
