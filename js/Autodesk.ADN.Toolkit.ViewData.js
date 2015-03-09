@@ -40,8 +40,7 @@ Autodesk.ADN.Toolkit.ViewData = Autodesk.ADN.Toolkit.ViewData || {};
 ///////////////////////////////////////////////////////////////////////////////
 Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     baseUrl,
-    accessTokenOrUrl,
-    onTokenInitialized) {
+    accessTokenOrUrl) {
 
     ///////////////////////////////////////////////////////////////////////////
     // Private Members
@@ -49,7 +48,9 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     ///////////////////////////////////////////////////////////////////////////
     var _acessTokenUrl = accessTokenOrUrl;
 
-    var _accessToken = accessTokenOrUrl;
+    var _accessTokenResponse = null;
+
+    var _onInitialized = null;
 
     var _baseUrl = baseUrl;
 
@@ -98,10 +99,10 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
         setTimeout(_requestTokenAsync,
             response.expires_in * 1000);
 
-            _accessToken = response.access_token;
+            _accessTokenResponse = response;
 
-        if(onTokenInitialized) {
-            onTokenInitialized(response);
+        if(_onInitialized) {
+            _onInitialized();
         }
 
     }, function(error) {
@@ -109,6 +110,17 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
         console.log('AdnViewDataClient error requesting token: '  + error)
     });
 
+    this.onInitialized = function(callback) {
+
+        if(_accessTokenResponse) {
+
+            callback()
+        }
+        else {
+
+            _onInitialized = callback;
+        }
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // Set the cookie upon server response
@@ -129,7 +141,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
             'application/x-www-form-urlencoded');
 
         xhr.withCredentials = true;
-        xhr.send("access-token=" + _accessToken);
+        xhr.send("access-token=" + _accessTokenResponse.access_token);
     };
 
     ///////////////////////////////////////////////////////////////////////////
@@ -170,7 +182,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
         xhr.setRequestHeader(
            'Authorization',
-           'Bearer ' + _accessToken);
+           'Bearer ' + _accessTokenResponse.access_token);
 
         xhr.setRequestHeader(
           'Content-Type',
@@ -227,7 +239,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
         xhr.setRequestHeader(
            'Authorization',
-           'Bearer ' + _accessToken);
+           'Bearer ' + _accessTokenResponse.access_token);
 
         xhr.setRequestHeader(
           'Content-Type',
@@ -289,7 +301,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
         xhr.setRequestHeader(
           'Authorization',
-          'Bearer ' + _accessToken);
+          'Bearer ' + _accessTokenResponse.access_token);
 
         xhr.setRequestHeader(
           'Content-Type',
@@ -347,7 +359,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
         xhr.setRequestHeader(
            'Authorization',
-           'Bearer ' + _accessToken);
+           'Bearer ' + _accessTokenResponse.access_token);
 
         xhr.setRequestHeader(
           'Content-Type',
@@ -405,7 +417,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
         xhr.setRequestHeader(
            'Authorization',
-           'Bearer ' + _accessToken);
+           'Bearer ' + _accessTokenResponse.access_token);
 
         xhr.responseType = 'arraybuffer';
 
@@ -503,7 +515,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
         xhr.setRequestHeader(
            'Authorization',
-           'Bearer ' + _accessToken);
+           'Bearer ' + _accessTokenResponse.access_token);
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState == 4) {
