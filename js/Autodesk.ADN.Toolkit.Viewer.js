@@ -529,16 +529,18 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
         var viewerDiv = _createViewerDiv(container);
 
         var viewerType = (viewerConfig ?
-            (config.viewerType ?
-                config.viewerType :
+            (viewerConfig.viewerType ?
+                viewerConfig.viewerType :
                 'GuiViewer3D') :
             'GuiViewer3D');
 
         switch(viewerType) {
+
             case 'GuiViewer3D':
                 viewer = new Autodesk.Viewing.Private.GuiViewer3D(
                     viewerDiv);
                 break;
+
             case 'Viewer3D':
                 viewer = new Autodesk.Viewing.Viewer3D(
                     viewerDiv);
