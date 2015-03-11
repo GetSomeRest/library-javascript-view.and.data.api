@@ -421,8 +421,10 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
 
                     for (var i =0; i<items2d.length; ++i) {
 
-                        pathCollection.path2d.push(
-                            document.getViewablePath(items2d[i]));
+                        pathCollection.path2d.push({
+                                name : items2d[i].name,
+                                path: document.getViewablePath(items2d[i])
+                            });
                     }
 
                     var items3d = Autodesk.Viewing.Document.getSubItemsWithProperties(
@@ -437,8 +439,10 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
 
                         console.log(items3d[i]);
 
-                        pathCollection.path3d.push(
-                            document.getViewablePath(items3d[i]));
+                        pathCollection.path3d.push({
+                                name : items3d[i].name,
+                                path: document.getViewablePath(items3d[i])
+                            });
                     }
 
                     onSuccess(pathCollection);
