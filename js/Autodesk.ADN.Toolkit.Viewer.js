@@ -342,7 +342,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 ///////////////////////////////////////////////////////////////////////////////
 Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
     tokenOrUrl,
-    config) {
+    factoryConfig) {
 
     ///////////////////////////////////////////////////////////////////////////
     // Check if string is a valid url
@@ -367,6 +367,16 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
 
         return guid;
     };
+
+    var _getConfigProperty = function(config, propName, defaultValue) {
+
+        if(config && config[propName]) {
+
+            return config[propName];
+        }
+
+        return defaultValue;
+    }
 
     ///////////////////////////////////////////////////////////////////////////
     // Private Members
@@ -444,8 +454,8 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
 
         var options = {
 
-            env: (config && config.environment ?
-                config.environment : "AutodeskProduction")
+            env: (factoryConfig && factoryConfig.environment ?
+                factoryConfig.environment : "AutodeskProduction")
         };
 
         // initialized with getToken callback
@@ -545,7 +555,6 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
                 viewer = new Autodesk.Viewing.Viewer3D(
                     viewerDiv);
                 break;
-
         }
 
         viewer.start();
