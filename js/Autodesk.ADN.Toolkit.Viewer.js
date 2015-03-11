@@ -368,14 +368,17 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
         return guid;
     };
 
-    var _getConfigProperty = function(config, propName, defaultValue) {
+    var _addGetProperty = function (object) {
 
-        if(config && config[propName]) {
+        object.getProperty = function (propName, defaultValue) {
 
-            return config[propName];
+            if (this && this.hasOwnProperty(propName)) {
+
+                return this[propName];
+            }
+
+            return defaultValue;
         }
-
-        return defaultValue;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -454,8 +457,9 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
 
         var options = {
 
-            env: (factoryConfig && factoryConfig.environment ?
-                factoryConfig.environment : "AutodeskProduction")
+            env: factoryConfig.getProperty(
+                'environment',
+                'AutodeskProduction')
         };
 
         // initialized with getToken callback
@@ -534,17 +538,13 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
     ///////////////////////////////////////////////////////////////////////////
     this.createViewer = function (container, viewerConfig) {
 
+        _addGetProperty(viewerConfig);
+
         var viewer = null;
 
         var viewerDiv = _createViewerDiv(container);
 
-        var viewerType = (viewerConfig ?
-            (viewerConfig.viewerType ?
-                viewerConfig.viewerType :
-                'GuiViewer3D') :
-            'GuiViewer3D');
-
-        switch(viewerType) {
+        switch(viewerConfig.getProperty('viewerType', 'GuiViewer3D')) {
 
             case 'GuiViewer3D':
                 viewer = new Autodesk.Viewing.Private.GuiViewer3D(
@@ -559,13 +559,22 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
 
         viewer.start();
 
-        viewer.setProgressiveRendering(true);
+        viewer.setProgressiveRendering(
+            viewerConfig.getProperty('progressiveRendering', true)
+        );
 
         viewer.setQualityLevel(true, true);
 
-        viewer.impl.setLightPreset(8);
+        viewer.impl.setLightPreset(
+            viewerConfig.getProperty('lightPreset', 8)
+        );
 
-        viewer.setBackgroundColor(3,4,5, 250, 250, 250);
+        var bkColor = viewerConfig.getProperty('backgroundColor',
+            [3,4,5, 250, 250, 250]);
+
+        viewer.setBackgroundColor(
+            bkColor[0], bkColor[1], bkColor[2],
+            bkColor[3], bkColor[4], bkColor[5]);
 
         viewer.addEventListener(
 
@@ -578,4 +587,6 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
 
         return viewer;
     }
+    
+    _addGetProperty(factoryConfig);
 }
