@@ -435,6 +435,8 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
 
                     for (var i =0; i<items3d.length; ++i) {
 
+                        console.log(items3d[i])
+
                         pathCollection.path3d.push(
                             document.getViewablePath(items3d[i]));
                     }
@@ -560,16 +562,25 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
         viewer.start();
 
         viewer.setProgressiveRendering(
-            viewerConfig.getProperty('progressiveRendering', true)
+            viewerConfig.getProperty(
+                'progressiveRendering',
+                true)
         );
 
-        viewer.setQualityLevel(true, true);
+        var qualityLevel = viewerConfig.getProperty(
+            'qualityLevel', [true, true]);
+
+        viewer.setQualityLevel(
+            qualityLevel[0],
+            qualityLevel[1]);
 
         viewer.impl.setLightPreset(
-            viewerConfig.getProperty('lightPreset', 8)
+            viewerConfig.getProperty(
+                'lightPreset', 8)
         );
 
-        var bkColor = viewerConfig.getProperty('backgroundColor',
+        var bkColor = viewerConfig.getProperty(
+            'backgroundColor',
             [3,4,5, 250, 250, 250]);
 
         viewer.setBackgroundColor(
