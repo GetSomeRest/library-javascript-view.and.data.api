@@ -437,8 +437,6 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
 
                     for (var i =0; i<items3d.length; ++i) {
 
-                        console.log(items3d[i]);
-
                         pathCollection.path3d.push({
                                 name : items3d[i].name,
                                 path: document.getViewablePath(items3d[i])
