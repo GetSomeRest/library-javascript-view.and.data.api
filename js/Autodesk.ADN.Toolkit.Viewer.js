@@ -589,6 +589,11 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
             bkColor[0], bkColor[1], bkColor[2],
             bkColor[3], bkColor[4], bkColor[5]);
 
+        viewer.setDefaultNavigationTool(
+            viewerConfig.getProperty(
+            'navigationTool',
+            'free orbit'));
+
         viewer.addEventListener(
 
             Autodesk.Viewing.GEOMETRY_LOADED_EVENT,
