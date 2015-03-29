@@ -70,6 +70,7 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
                     target: this.navigation.getTarget(),
                     fov: this.getFOV(),
                     up: this.navigation.getCameraUpVector(),
+                    worldUp: this.navigation.getWorldUpVector(),
                     explode: this.getExplodeScale()
                 };
 
