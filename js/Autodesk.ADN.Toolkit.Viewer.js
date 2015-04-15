@@ -243,7 +243,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
         var previousDiv = document.getElementById(_viewerDivId);
 
-        if(typeof previousDiv !== 'undefined') {
+        if(previousDiv) {
             previousDiv.parentElement.removeChild(previousDiv);
         }
 
