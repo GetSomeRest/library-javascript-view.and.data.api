@@ -85,16 +85,6 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
         }
     });
 
-    //$(document).keyup(function (e) {
-    //    // esc
-    //    if (e.keyCode == 27) {
-    //
-    //        if(_viewer) {
-    //            _viewer.fitToView(false);
-    //        }
-    //    }
-    //});
-
     ///////////////////////////////////////////////////////////////////////////
     // Returns adsk viewer
     //
@@ -196,7 +186,9 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     ///////////////////////////////////////////////////////////////////////////
     this.closeDocument = function () {
 
-        $('#' + _viewerDivId).remove();
+        var previousDiv = document.getElementById(_viewerDivId);
+
+        previousDiv.parentElement.removeChild(previousDiv);
 
         _viewer = null;
     }
@@ -249,7 +241,11 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     ///////////////////////////////////////////////////////////////////////////
     var _createViewerDiv = function (container) {
 
-        $('#' + _viewerDivId).remove();
+        var previousDiv = document.getElementById(_viewerDivId);
+
+        if(typeof previousDiv !== 'undefined') {
+            previousDiv.parentElement.removeChild(previousDiv);
+        }
 
         var viewerDiv = document.createElement("div");
 
@@ -259,26 +255,27 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
         container.appendChild(viewerDiv);
 
-        // disable default context menu on viewer div 
-        $('#' + _viewerDivId).on('contextmenu',
-            function (e) {
-                e.preventDefault();
-            });
+        viewerDiv.addEventListener("contextmenu",
+          function (e) {
+              e.preventDefault();
+          });
 
-        // disable scrolling on DOM document 
+        // disable scrolling on DOM document
         // while mouse pointer is over viewer area
-        $('#' + _viewerDivId).hover(
-            function () {
-                var x = window.scrollX;
-                var y = window.scrollY;
-                window.onscroll = function () {
-                    window.scrollTo(x, y);
-                };
-            },
-            function () {
-                window.onscroll = null;
-            }
-        );
+
+        viewerDiv.addEventListener("mouseover",
+          function (e) {
+              var x = window.scrollX;
+              var y = window.scrollY;
+              window.onscroll = function () {
+                  window.scrollTo(x, y);
+              };
+          });
+
+        viewerDiv.addEventListener("mouseout",
+          function (e) {
+              window.onscroll = null;
+          });
 
         return viewerDiv;
     };
@@ -529,11 +526,6 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
                 e.preventDefault();
             });
 
-        //$('#' + id).on('contextmenu',
-        //    function (e) {
-        //        e.preventDefault();
-        //    });
-
         // disable scrolling on DOM document
         // while mouse pointer is over viewer area
 
@@ -550,19 +542,6 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
           function (e) {
               window.onscroll = null;
           });
-
-        //$('#' + id).hover(
-        //    function () {
-        //        var x = window.scrollX;
-        //        var y = window.scrollY;
-        //        window.onscroll = function () {
-        //            window.scrollTo(x, y);
-        //        };
-        //    },
-        //    function () {
-        //        window.onscroll = null;
-        //    }
-        //);
 
         return viewerDiv;
     };
