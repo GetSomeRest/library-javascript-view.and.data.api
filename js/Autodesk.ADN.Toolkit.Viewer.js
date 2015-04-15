@@ -75,7 +75,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
     var _self = this;
 
     //fit view on escape
-    $(document).keyup(function (e) {
+    document.addEventListener("keyup", function (e) {
         // esc
         if (e.keyCode == 27) {
 
@@ -84,6 +84,16 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
             }
         }
     });
+
+    //$(document).keyup(function (e) {
+    //    // esc
+    //    if (e.keyCode == 27) {
+    //
+    //        if(_viewer) {
+    //            _viewer.fitToView(false);
+    //        }
+    //    }
+    //});
 
     ///////////////////////////////////////////////////////////////////////////
     // Returns adsk viewer
@@ -513,10 +523,16 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
         container.appendChild(viewerDiv);
 
         // disable default context menu on viewer div
-        $('#' + id).on('contextmenu',
-            function (e) {
+
+        viewerDiv.addEventListener("contextmenu",
+          function (e) {
                 e.preventDefault();
             });
+        
+        //$('#' + id).on('contextmenu',
+        //    function (e) {
+        //        e.preventDefault();
+        //    });
 
         // disable scrolling on DOM document
         // while mouse pointer is over viewer area
