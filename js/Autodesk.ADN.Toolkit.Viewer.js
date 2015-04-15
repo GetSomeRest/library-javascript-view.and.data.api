@@ -528,7 +528,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
           function (e) {
                 e.preventDefault();
             });
-        
+
         //$('#' + id).on('contextmenu',
         //    function (e) {
         //        e.preventDefault();
@@ -536,18 +536,33 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
 
         // disable scrolling on DOM document
         // while mouse pointer is over viewer area
-        $('#' + id).hover(
-            function () {
-                var x = window.scrollX;
-                var y = window.scrollY;
-                window.onscroll = function () {
-                    window.scrollTo(x, y);
-                };
-            },
-            function () {
-                window.onscroll = null;
-            }
-        );
+
+        viewerDiv.addEventListener("mouseover",
+          function (e) {
+              var x = window.scrollX;
+              var y = window.scrollY;
+              window.onscroll = function () {
+                  window.scrollTo(x, y);
+              };
+          });
+
+        viewerDiv.addEventListener("mouseout",
+          function (e) {
+              window.onscroll = null;
+          });
+
+        //$('#' + id).hover(
+        //    function () {
+        //        var x = window.scrollX;
+        //        var y = window.scrollY;
+        //        window.onscroll = function () {
+        //            window.scrollTo(x, y);
+        //        };
+        //    },
+        //    function () {
+        //        window.onscroll = null;
+        //    }
+        //);
 
         return viewerDiv;
     };
