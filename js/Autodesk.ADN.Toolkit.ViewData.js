@@ -96,13 +96,19 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
     _requestTokenAsync(function(response){
 
-        setTimeout(_requestTokenAsync,
-            response.expires_in * 1000);
+        var args = arguments.callee;
 
-            _accessTokenResponse = response;
+        setTimeout(function() {
+            _requestTokenAsync(args);
+        }, response.expires_in * 1000);
+
+        _accessTokenResponse = response;
 
         if(_onInitialized) {
+
             _onInitialized();
+
+            _onInitialized = null;
         }
 
     }, function(error) {
