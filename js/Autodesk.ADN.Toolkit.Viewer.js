@@ -602,7 +602,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
         viewer.setDefaultNavigationTool(
             viewerConfig.getProperty(
             'navigationTool',
-            'free orbit'));
+            'freeorbit'));
 
         viewer.addEventListener(
 
