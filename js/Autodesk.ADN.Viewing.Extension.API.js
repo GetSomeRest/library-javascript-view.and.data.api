@@ -57,7 +57,7 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
         // Get current view
         //
         ///////////////////////////////////////////////////////////////////////////
-        Autodesk.Viewing.Viewer.prototype.getCurrentView =
+        Autodesk.Viewing.Viewer3D.prototype.getCurrentView =
 
             function (viewname) {
 
@@ -81,7 +81,7 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
         // Set view
         //
         ///////////////////////////////////////////////////////////////////////////
-        Autodesk.Viewing.Viewer.prototype.setView =
+        Autodesk.Viewing.Viewer3D.prototype.setView =
 
             function (view) {
 
@@ -114,7 +114,7 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
         // Get Property Value
         //
         ///////////////////////////////////////////////////////////////////////////
-        Autodesk.Viewing.Viewer.prototype.getPropertyValue =
+        Autodesk.Viewing.Viewer3D.prototype.getPropertyValue =
 
             function (dbId, displayName, callback) {
 
@@ -144,7 +144,7 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
         // Get all leaf components
         //
         ///////////////////////////////////////////////////////////////////////////
-        Autodesk.Viewing.Viewer.prototype.getAllLeafComponents =
+        Autodesk.Viewing.Viewer3D.prototype.getAllLeafComponents =
 
             function (callback) {
 
@@ -187,7 +187,7 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
         //
         //
         ///////////////////////////////////////////////////////////////////////////
-        Autodesk.Viewing.Viewer.prototype.startMotionLoop =
+        Autodesk.Viewing.Viewer3D.prototype.startMotionLoop =
 
             function() {
 
@@ -219,7 +219,7 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
         //
         //
         ///////////////////////////////////////////////////////////////////////////
-        Autodesk.Viewing.Viewer.prototype.startExplodeMotion =
+        Autodesk.Viewing.Viewer3D.prototype.startExplodeMotion =
 
             function (speed, min, max) {
 
@@ -253,7 +253,7 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
                 this.motionCallbacks['explode'] = explodeMotion;
             }
 
-        Autodesk.Viewing.Viewer.prototype.stopExplodeMotion =
+        Autodesk.Viewing.Viewer3D.prototype.stopExplodeMotion =
 
             function () {
 
@@ -269,7 +269,7 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
         //
         //
         ///////////////////////////////////////////////////////////////////////////
-        Autodesk.Viewing.Viewer.prototype.startRotateMotion =
+        Autodesk.Viewing.Viewer3D.prototype.startRotateMotion =
 
             function (speed, axis) {
 
@@ -305,7 +305,7 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
                 this.motionCallbacks['rotate'] = rotateMotion;
             }
 
-        Autodesk.Viewing.Viewer.prototype.stopRotateMotion =
+        Autodesk.Viewing.Viewer3D.prototype.stopRotateMotion =
 
             function () {
 
