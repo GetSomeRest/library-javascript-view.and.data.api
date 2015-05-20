@@ -569,6 +569,14 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
                 viewer = new Autodesk.Viewing.Viewer3D(
                     viewerDiv);
                 break;
+
+            default:
+
+                console.log("Warning: viewerType not specified in config, using Viewer3D");
+              
+                viewer = new Autodesk.Viewing.Viewer3D(
+                  viewerDiv);
+                break;
         }
 
         viewer.start();
