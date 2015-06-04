@@ -177,7 +177,7 @@ Autodesk.ADN.Viewing.Extension.API = function (viewer, options) {
 
                 this.getObjectTree(function (result) {
 
-                    var allLeafComponents = getLeafComponentsRec(result);
+                    var allLeafComponents = getLeafComponentsRec(result.root);
 
                     callback(allLeafComponents);
                 });
