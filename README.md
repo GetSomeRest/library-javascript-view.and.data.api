@@ -3,6 +3,8 @@
 
 ##Description
 
+Update to v1.2.15   - June 4th, 2015
+
 This sample contains JavaScript libraries providing high level wrappers and features for the Autodesk View & Data API:
 
 - Autodesk.ADN.Toolkit.ViewData.js
