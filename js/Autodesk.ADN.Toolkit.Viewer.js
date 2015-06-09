@@ -319,7 +319,7 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
             viewer = new Autodesk.Viewing.Private.GuiViewer3D(
                 viewerDiv);
         }
-
+s
         viewer.start();
 
         //viewer.setProgressiveRendering(true);
@@ -582,11 +582,11 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
 
         viewer.start();
 
-        viewer.setProgressiveRendering(
-            viewerConfig.getProperty(
-                'progressiveRendering',
-                true)
-        );
+        // viewer.setProgressiveRendering(
+        //     viewerConfig.getProperty(
+        //         'progressiveRendering',
+        //         true)
+        // );
 
         var qualityLevel = viewerConfig.getProperty(
             'qualityLevel', [true, true]);
