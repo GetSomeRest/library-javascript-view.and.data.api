@@ -322,11 +322,11 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
 
         viewer.start();
 
-        viewer.setProgressiveRendering(true);
+        //viewer.setProgressiveRendering(true);
 
         viewer.setQualityLevel(true, true);
 
-        viewer.impl.setLightPreset(8);
+        //viewer.setLightPreset(8);
 
         viewer.setBackgroundColor(3,4,5, 250, 250, 250);
 
