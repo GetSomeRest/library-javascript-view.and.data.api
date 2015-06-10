@@ -319,14 +319,14 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerManager = function (
             viewer = new Autodesk.Viewing.Private.GuiViewer3D(
                 viewerDiv);
         }
-s
+
         viewer.start();
 
-        //viewer.setProgressiveRendering(true);
+        viewer.setProgressiveRendering(true);
 
         viewer.setQualityLevel(true, true);
 
-        //viewer.setLightPreset(8);
+        viewer.setLightPreset(8);
 
         viewer.setBackgroundColor(3,4,5, 250, 250, 250);
 
@@ -582,11 +582,11 @@ Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
 
         viewer.start();
 
-        // viewer.setProgressiveRendering(
-        //     viewerConfig.getProperty(
-        //         'progressiveRendering',
-        //         true)
-        // );
+        viewer.setProgressiveRendering(
+            viewerConfig.getProperty(
+                'progressiveRendering',
+                true)
+        );
 
         var qualityLevel = viewerConfig.getProperty(
             'qualityLevel', [true, true]);
