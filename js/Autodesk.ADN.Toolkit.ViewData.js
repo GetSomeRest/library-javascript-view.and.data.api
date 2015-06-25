@@ -136,18 +136,24 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     ///////////////////////////////////////////////////////////////////////////
     this.setToken = function () {
 
+        var token_payload ={
+            'oauth2' : {
+                'token' : _accessTokenResponse.access_token
+            }
+        };
+
         var xhr = new XMLHttpRequest();
 
         xhr.open('POST',
-            _baseUrl + '/utility/v1/settoken',
+            _baseUrl + '/derivativeservice/v2/token',
             false);
 
         xhr.setRequestHeader(
             'Content-Type',
-            'application/x-www-form-urlencoded');
+            'application/json');
 
         xhr.withCredentials = true;
-        xhr.send("access-token=" + _accessTokenResponse.access_token);
+        xhr.send(JSON.stringify(token_payload));
     };
 
     ///////////////////////////////////////////////////////////////////////////
@@ -349,7 +355,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     // Register an uploaded file
     //
     // API: 
-    // POST /viewingservice/{apiversion}/register
+    // POST /derivativeservice/{apiversion}/registration
     //
     // Response:
     //
@@ -360,7 +366,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
         var xhr = new XMLHttpRequest();
 
         xhr.open('POST',
-            _baseUrl + '/viewingservice/v1/register',
+            _baseUrl + '/derivativeservice/v2/registration',
             false);
 
         xhr.setRequestHeader(
@@ -374,7 +380,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
         //xhr.onreadystatechange = ...;
 
         var body = {
-            urn: this.toBase64(fileId)
+            design: this.toBase64(fileId)
         };
 
         try {
@@ -393,8 +399,8 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     // Get model thumbnail
     //
     // API: 
-    // GET /viewingservice/{apiversion}/thumbnails/{urn}?
-    //     guid=$GUID$ & width=$WIDTH$ & height=$HEIGHT$ (& type=$TYPE$)
+    // GET /derivativeservice/v2/thumbnails/{urn}?guid=$GUID$ & width=$WIDTH$ & height=$HEIGHT$ 
+    // (& type=$TYPE$ & role=$ROLE$ & fileType=$FILETYPE$ & mimeType=$MIMETYPE$)
     //
     // Response:
     //
@@ -417,7 +423,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
         xhr.open('GET',
             _baseUrl +
-            "/viewingservice/v1/thumbnails/" +
+            "/derivativeservice/v2/thumbnails/" +
             this.toBase64(fileId),
             true);
 
@@ -451,9 +457,9 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     // Get model viewable
     //
     // API: 
-    // GET /viewingservice/{apiversion}/{urn}?guid=$GUID$
-    // GET /viewingservice/{apiversion}/{urn}/status?guid=$GUID$
-    // GET /viewingservice/{apiversion}/{urn}/all?guid=$GUID$
+    // GET /derivativeservice/{apiversion}/manifest/{urn}?guid=$GUID$
+    // GET /derivativeservice/{apiversion}/manifest/{urn}/status?guid=$GUID$
+    // GET /derivativeservice/{apiversion}/manifest/{urn}/all?guid=$GUID$
     //
     // Response:
     //
@@ -513,7 +519,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
         xhr.open('GET',
             _baseUrl +
-            "/viewingservice/v1/" +
+            "/derivativeservice/v2/manifest/" +
             this.toBase64(fileId) +
             optionStr +
             parameters,
