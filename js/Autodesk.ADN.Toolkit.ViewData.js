@@ -163,7 +163,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     // bucketCreationData = {
     //      bucketKey : "bucketKey",
     //      servicesAllowed: {},
-    //      policy: "temporary/transient/persistent
+    //      policyKey: "temporary/transient/persistent
     // }
     //
     // API: 
@@ -171,15 +171,18 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     //
     // Response:
     //
-    // "{
-    //      "key":"bucketKey",
-    //      "owner":"tAp1fqjjtcgqS4CKpCYDjAyNbKW4IVCC",
-    //      "createDate":1404984496468,
-    //      "permissions":[{
-    //          "serviceId":"tAp1fqjjtcgqS4CKpCYDjAyNbKW4IVCC",
-    //          "access":"full"}],
-    //      "policyKey":"persistent"
-    //  }"
+    // {
+    // "bucketKey": "sampletestbucketdanieldu12345",
+    // "bucketOwner": "mvMpJWBGyBuGpVycB77FFgP45T4dBycD",
+    // "createdDate": 1435633089537,
+    // "permissions": [
+    // {
+    // "authId": "mvMpJWBGyBuGpVycB77FFgP45T4dBycD",
+    // "access": "full"
+    // }
+    // ],
+    // "policyKey": "temporary"
+    // }
     ///////////////////////////////////////////////////////////////////////////
     this.createBucketAsync = function (
         bucketCreationData,
@@ -189,7 +192,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
         var xhr = new XMLHttpRequest();
 
         xhr.open('POST',
-            _baseUrl + "/oss/v1/buckets",
+            _baseUrl + "/oss/v2/buckets",
             true);
 
         xhr.setRequestHeader(
@@ -287,6 +290,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     //
     // Response:
     //
+    //v1
     // "{   "bucket-key" : "adn-10.07.2014-11.28.15",
     //      "file": file,
     //      "objects" : [ {
@@ -297,6 +301,17 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
     //          "sha-1" : "ba824b22a6df9d0fc30943ffcf8129e2b9de80f6",
     //          "content-type" : "application/stream"  } ]
     //  }"
+    //  
+    //  v2
+    //  {
+    // "bucketKey": "sampletestbucketdanieldu12345",
+    // "objectId": "urn:adsk.objects:os.object:sampletestbucketdanieldu12345/Drill.dwfx",
+    // "objectKey": "Drill.dwfx",
+    // "sha1": "28f3e01b0050fbc8a619b68b229947f18ebe94ee",
+    // "size": 945973,
+    // "contentType": "application/json",
+    // "location": "https://developer.api.autodesk.com/oss/v2/buckets/sampletestbucketdanieldu12345/objects/Drill.dwfx"
+    // }
     ///////////////////////////////////////////////////////////////////////////
     this.uploadFileAsync = function (
         file,
@@ -308,7 +323,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
         var xhr = new XMLHttpRequest();
 
         xhr.open('PUT',
-            _baseUrl + '/oss/v1/buckets/' + bucketKey + '/objects/' + objectKey,
+            _baseUrl + '/oss/v2/buckets/' + bucketKey + '/objects/' + objectKey,
             true);
 
         xhr.setRequestHeader(

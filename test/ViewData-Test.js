@@ -15,7 +15,7 @@ function createPersistantBucket(bucket_name){
 		var bucketCreationData = {
             bucketKey: bucket_name,
             servicesAllowed: {},
-            policy: 'persistent'
+            policyKey: 'persistent'
         }
 
 		viewDataClient.createBucketAsync(
@@ -133,7 +133,7 @@ describe('ViewData Client test suite',function(){
 			var bucketCreationData = {
 	            bucketKey: temp_bucket_name,
 	            servicesAllowed: {},
-	            policy: 'transient'
+	            policyKey: 'transient'
 	        }
 
 			viewDataClient.createBucketAsync(
@@ -143,8 +143,8 @@ describe('ViewData Client test suite',function(){
 	                console.log('Bucket creation successful:');
 	                console.log(response);
 	                
-	                expect(response).to.have.property('key');
-	                expect(response.key).to.equal(temp_bucket_name);
+	                expect(response).to.have.property('bucketKey');
+	                expect(response.bucketKey).to.equal(temp_bucket_name);
 
 	                done();
 	            },
@@ -182,12 +182,12 @@ describe('ViewData Client test suite',function(){
                 filename,//file.name,
                 function(response){
                 	console.log(response);
-                	expect(response).to.have.property('file');
+                	expect(response).to.have.property('objectKey');
+                	expect(response.objectKey).to.equal(filename);
                 	expect(response.file.size).to.equal(file.size);
-                	expect(response.objects[0].key).to.equal(filename);
 
                 	var expectedFileId = 'urn:adsk.objects:os.object:' + bucket_name + '/' + filename;
-                	expect(response.objects[0].id).to.equal(expectedFileId);
+                	expect(response.objectId).to.equal(expectedFileId);
 
                 	done();
                 },
@@ -305,8 +305,8 @@ describe('ViewData Client test suite',function(){
 					expect(viewable).to.have.property('success');
 					expect(viewable.success).to.contain('%');
 				
-					expect(viewable).to.have.property('script');
-					expect(viewable.script).to.equal('viewing-dwf-lmv');
+					//expect(viewable).to.have.property('script');
+					//expect(viewable.script).to.equal('viewing-dwf-lmv');
 					done();
 				},
 				function(error){
