@@ -23,10 +23,6 @@ Provides a high-level wrapper to work with the View & Data REST API:
 
 Provides a high-level wrapper to work with the viewer client-side JavaScript API
 
-- Autodesk.ADN.Viewing.Extension.API.js
-
-Provides some additional methods to the viewer object. See [this blog post](http://adndevblog.typepad.com/cloud_and_mobile/2014/10/how-to-write-custom-extensions-for-the-large-model-viewer.html) for more information about how to use viewer extensions
-
 ##Dependencies
 
 None
@@ -38,44 +34,54 @@ None
 
     - Autodesk.ADN.Toolkit.ViewData.js: see view-data-wrapper-test.html
 
-    - Autodesk.ADN.Toolkit.Viewer.js: see viewer-test.html for a complete example
+    - Autodesk.ADN.Toolkit.Viewer.js: see viewer-wrapper-test.html for a complete example
 
-            $(document).ready(function () {
+            var viewerFactoryConfig = {
 
-                var config = {
-
-                    environment : 'AutodeskProduction' // 'AutodeskProduction' | 'AutodeskStaging'
-                    viewerType: '' //'GuiViewer3D' | 'Viewer3D'
-                }
-
-                var adnViewerMng = new Autodesk.ADN.Toolkit.Viewer.AdnViewerManager(
-                    tokenurl,  // url of your token service
-                    //(ex reply: {token_type: "Bearer", expires_in: 1799, access_token: "..."}
-                    document.getElementById('viewerDiv'), //viewer div id
-                    config);
-
-                adnViewerMng.loadDocument(urn, onViewerInitialized, onError);
-            });
-
-            function onViewerInitialized(viewer)
-            {
-                console.log('Viewer initialized');
+                environment: 'AutodeskProduction'
             };
 
-            function onError(error)
-            {
-                console.log(error);
+            var viewerConfig = {
+
+                lightPreset: 8,
+                viewerType: 'Viewer3D', //['Viewer3D', 'GuiViewer3D']
+                qualityLevel: [true, true],
+                navigationTool:'freeorbit',
+                progressiveRendering: true,
+                backgroundColor:[3,4,5, 250, 250, 250]
             };
 
-    - Autodesk.ADN.Viewing.Extension.APIjs: no html sample, but quite straightforward to use
+            var viewerFactory = new Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory (
+                document.getElementById("token").value,
+                viewerFactoryConfig);
 
-            // Once the viewer has been set up, you can load the extension
-            // which will add extra functions to the viewer object
-            viewer.loadExtension('Autodesk.ADN.Viewing.Extension.API');
+            viewerFactory.onInitialized (function() {
 
-            // Now you can start using those extra functions
-            // E.g. startExplodeMotion(speed, min, max)
-            viewer.startExplodeMotion(0.5, 0, 1);
+                viewerFactory.getViewablePath(viewable.urn,
+                    function(pathCollection){
+
+                        //the DOM container
+                        var viewerContainer = document.getElementById("viewer");
+
+                        viewer = viewerFactory.createViewer(
+                                viewerContainer,
+                                viewerConfig);
+
+                        //loads the first 3d or 2d path available
+                        if(pathCollection.path3d.length > 0) {
+
+                            viewer.load(pathCollection.path3d[0].path);
+                        }
+
+                        else if(pathCollection.path2d.length > 0) {
+
+                            viewer.load(pathCollection.path2d[0].path);
+                        }
+                    },
+                    function(error) {
+
+                        console.log(error);
+                    });
 
 ## License
 
@@ -83,7 +89,7 @@ library-javascript-view.and.data.api is licensed under the terms of the [MIT Lic
 
 ##Written by 
 
-[Balaji Ramamoorthy](http://adndevblog.typepad.com/autocad/balaji-ramamoorthy.html) & [Philippe Leefsma](http://adndevblog.typepad.com/cloud_and_mobile/philippe-leefsma.html)
+[Balaji Ramamoorthy](http://adndevblog.typepad.com/autocad/balaji-ramamoorthy.html), [Philippe Leefsma](http://adndevblog.typepad.com/cloud_and_mobile/philippe-leefsma.html) & [Daniel Du](http://adndevblog.typepad.com/cloud_and_mobile/daniel-du.html)
 
 
 
