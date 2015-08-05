@@ -6,27 +6,15 @@
     <style>
         .roundedArea {
 
-            margin:25px;         
-            width: 500px;
+            border: 1px solid #cccccc;
             padding: 10px;
             background-color:#cccccc;
-            border: 1px solid #cccccc;
-
-            -webkit-border-radius: 15px;
-            -moz-border-radius: 15px;
-             border-radius: 15px;
-        }
-
-        #viewer {
-
             margin:25px;
-            width: 520px;
-            position: relative;
-            overflow: hidden;
 
             background-color:#cccccc;
-            border: 1px solid #cccccc;
-
+        
+            width: 500px;
+         
             -webkit-border-radius: 15px;
             -moz-border-radius: 15px;
              border-radius: 15px;
@@ -34,16 +22,7 @@
 
     </style>
 
-    <script type='text/javascript' src='http://code.jquery.com/jquery-2.1.1.js'></script>    
-
-    <!--///////////////////////////////////////////////////////////////////////
-    // Viewer
-    //
-    ////////////////////////////////////////////////////////////////////////-->
-    <link type="text/css" rel="stylesheet" href="https://developer.api.autodesk.com/viewingservice/v1/viewers/style.css"/>
-    <script  type="text/javascript" src="https://developer.api.autodesk.com/viewingservice/v1/viewers/viewer3D.min.js"></script>
-    <script type='text/javascript' src='js/Autodesk.ADN.Toolkit.ViewData.js'></script>
-    <script type='text/javascript' src='js/Autodesk.ADN.Toolkit.Viewer.js'></script>
+    <script type='text/javascript' src='../dist/js/Autodesk.ADN.Toolkit.ViewData.js'></script>
 
     <script type='text/javascript'>
 
@@ -55,8 +34,6 @@
 
         var viewDataClient;
 
-        var adnViewerMng;
-
         ///////////////////////////////////////////////////////////////////////////
         // 
         //
@@ -64,7 +41,7 @@
         function testApi() {
 
             //sanity checks ...
-            var token = $('#token').val();
+            var token = document.getElementById("token").value;
 
             if (token === '') {
                 console.log('Access Token cannot be empty');
@@ -72,7 +49,7 @@
                 return;
             }
 
-            var bucket = $('#bucket').val();
+            var bucket = document.getElementById("bucket").value;
 
             if (bucket === '') {
                 console.log('Bucket name cannot be empty');
@@ -91,27 +68,29 @@
               'https://developer.api.autodesk.com',
               token);
 
-            viewDataClient.getBucketDetailsAsync(
+            viewDataClient.onInitialized(function() {
 
-                bucket,
+                viewDataClient.getBucketDetailsAsync(
+                        bucket,
 
-                //onSuccess
-                function (bucketResponse) {
+                        //onSuccess
+                        function (bucketResponse) {
 
-                    console.log('Bucket details successful:');
-                    console.log(bucketResponse);
+                            console.log('Bucket details successful:');
+                            console.log(bucketResponse);
 
-                    uploadFiles(bucket, files);
-                },
+                            uploadFiles(bucket, files);
+                        },
 
-                //onError
-                function (error) {
+                        //onError
+                        function (error) {
 
-                    console.log("Bucket doesn't exist");
-                    console.log("Attempting to create...");
+                            console.log("Bucket doesn't exist");
+                            console.log("Attempting to create...");
 
-                    createBucket(bucket);
-                });
+                            createBucket(bucket);
+                        });
+            });
         }
 
         ///////////////////////////////////////////////////////////////////////////
@@ -123,7 +102,7 @@
             var bucketCreationData = {
                 bucketKey: bucket,
                 servicesAllowed: {},
-                policy: 'transient'
+                policyKey: 'transient'
             }
 
             viewDataClient.createBucketAsync(
@@ -136,7 +115,7 @@
                     console.log('Bucket creation successful:');
                     console.log(response);
 
-                    uploadFiles(response.key, files);
+                    uploadFiles(response.bucketKey, files);
                 },
 
                 //onError
@@ -162,7 +141,6 @@
                 console.log('Uploading file: ' + file.name + ' ...');
 
                 viewDataClient.uploadFileAsync(
-
                     file,
                     bucket,
                     file.name,
@@ -173,40 +151,42 @@
                         console.log('File upload successful:');
                         console.log(response);
 
-                        var fileId = response.objects[0].id;
+                        var fileId = response.objectId;
 
-                        var registerResponse =
-                            viewDataClient.register(fileId);
+                        viewDataClient.registerAsync(fileId,
+                            function(registerResponse) {
 
-                        if (registerResponse.Result === "Success" ||
-                            registerResponse.Result === "Created") {
+                                console.log(registerResponse);
 
-                            console.log("Registration result: " +
-                                registerResponse.Result);
+                                if (registerResponse.Result === "Success" ||
+                                        registerResponse.Result === "Created") {
 
-                            console.log('Starting translation: ' +
-                                fileId);
+                                    console.log("Registration result: " +
+                                    registerResponse.Result);
 
-                            checkTranslationStatus(
-                                fileId,
-                                1000 * 60 * 5, //5 mins timeout
+                                    console.log('Starting translation: ' +
+                                    fileId);
 
-                                //onSuccess
-                                function (viewable) {
+                                    checkTranslationStatus(
+                                            fileId,
+                                            1000 * 60 * 5, //5 mins timeout
 
-                                    console.log("Translation successful: " +
-                                        response.file.name);
+                                            //onSuccess
+                                            function (viewable) {
 
-                                    console.log("Viewable: ");
-                                    console.log(viewable);
+                                                console.log("Translation successful: " +
+                                                response.file.name);
 
-                                    adnViewerMng = new Autodesk.ADN.Toolkit.Viewer.AdnViewerManager(
-                                        $('#token').val(),
-                                        document.getElementById('viewer'));
+                                                console.log("Viewable: ");
+                                                console.log(viewable);
 
-                                    adnViewerMng.loadDocument(viewable.urn);
-                                });
-                        }
+                                                var fileId = viewDataClient.fromBase64(
+                                                        viewable.urn);
+
+                                                addThumbnail(fileId, response.file.name);
+                                            });
+                                }
+                            });
                     },
 
                     //onError
@@ -216,6 +196,8 @@
                         console.log(error);
                     });
             }
+
+            files = [];
         }
 
         ///////////////////////////////////////////////////////////////////////////
@@ -291,13 +273,38 @@
         // 
         //
         ///////////////////////////////////////////////////////////////////////////
-        $().ready(function () {
+        function addThumbnail(fileId, name) {
 
-            document.getElementById('fileInput').addEventListener(
-                'change',
-                onFileSelect,
-                false);
-        });
+            var parent = document.getElementById('thumbnails');
+
+            var img = document.createElement('img');
+
+            img.width = 128;
+            img.height = 128;
+
+            parent.appendChild(document.createElement('br'));
+            parent.appendChild(img);
+
+            var label = document.createElement('label');
+            label.innerHTML = '   ' + name;
+
+            parent.appendChild(label);
+
+            parent.appendChild(document.createElement('br'));
+
+            viewDataClient.getThumbnailAsync(
+               fileId,
+               function (data) {
+                   img.src = "data:image/png;base64," + data;
+               },
+               function (error) {
+
+                   console.log(
+                       'Error getting thumbnail for ' +
+                       fileId + ': '
+                       + error);
+               });
+        };
 
     </script>
 
@@ -307,43 +314,56 @@
 
     <div class="roundedArea">
 
-        <strong>ADN View & Data API Tester</strong>
+        <strong>Welcome to the ADN View & Data API JavaScript Wrapper Tester</strong>
 
         <br><br>
         Input the name of a bucket and select files to upload. If the bucket doesn't exist it will be created, 
         then the files will be upload and translated, ready for viewing using the output URN.
 
         <br><br>
-        Token generation cannot be achieved from a browser, so you need API keys to generate the token some other way: 
-        using curl, an executable, ADN samples, ...    
+        Token generation cannot be achieved directly from a browser, so you need API keys to generate the token
+        some other way: using curl, an executable, ADN samples, ...
+        For demo purposes, you can use the url provided below.
 
         <br><br>
-        Access Token: 
+        Access Token URL (typically URL of your server returning token data):
         <br>
-        <input type="text" id="token">
+        <input type="text" id="token" style="width: 350px" value="http://still-spire-1606.herokuapp.com/api/rawtoken">
 
         <br><br>
         Bucket name: 
         <br>
-        <input type="text" id="bucket">
+        <input type="text" id="bucket" style="width: 350px">
 
     </div>
 
     <div class="roundedArea">
-        Select file to upload...
+        Select file(s) to upload...
         <br><br>
-        
-        <input type="file" id="fileInput" name="files[]"/>
+
+        <input type="file"
+               id="fileInput"
+               name="files[]"
+               multiple
+               onchange="onFileSelect(event)"/>
         
         <output id="fileList"></output>
     </div>
 
     <div class="roundedArea">    
-        <button type="button" onclick="testApi()">Let's view it!</button>
+        <button type="button" onclick="testApi()">Let's do it!</button>
     </div>
 
-    <div id="viewer" style="height:400px;">
+    <div class="roundedArea">    
+        <strong>Output:</strong><br><br>
 
+        <label id="output">
+        Traces are logged in the web console of your browser... Thumbnails of successful documents will be displayed below.
+        (We assume that if you are going to use a JavaScript API, you know how to use a browser console). 
+        </label>
+        <br>
+        <div id="thumbnails">
+        </div>
     </div>
     
 </body>
