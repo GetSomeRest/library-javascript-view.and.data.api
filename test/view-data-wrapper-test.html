@@ -22,7 +22,7 @@
 
     </style>
 
-    <script type='text/javascript' src='../dist/js/Autodesk.ADN.Toolkit.ViewData.js'></script>
+    <script type='text/javascript' src='../dist/js/view-and-data-client.js'></script>
 
     <script type='text/javascript'>
 
@@ -32,7 +32,7 @@
         ///////////////////////////////////////////////////////////////////////////
         var files = [];
 
-        var viewDataClient;
+        var viewAndDataClient;
 
         ///////////////////////////////////////////////////////////////////////////
         // 
@@ -64,13 +64,13 @@
             }
 
             //get into business
-            viewDataClient = new Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient(
+            viewAndDataClient = new Autodesk.ADN.Toolkit.ViewAndData.ViewAndDataClient(
               'https://developer.api.autodesk.com',
               token);
 
-            viewDataClient.onInitialized(function() {
+            viewAndDataClient.onInitialized(function() {
 
-                viewDataClient.getBucketDetailsAsync(
+                viewAndDataClient.getBucketDetailsAsync(
                         bucket,
 
                         //onSuccess
@@ -105,7 +105,7 @@
                 policyKey: 'transient'
             }
 
-            viewDataClient.createBucketAsync(
+            viewAndDataClient.createBucketAsync(
 
                 bucketCreationData,
 
@@ -140,7 +140,7 @@
 
                 console.log('Uploading file: ' + file.name + ' ...');
 
-                viewDataClient.uploadFileAsync(
+                viewAndDataClient.uploadFileAsync(
                     file,
                     bucket,
                     file.name,
@@ -153,7 +153,7 @@
 
                         var fileId = response.objectId;
 
-                        viewDataClient.registerAsync(fileId,
+                        viewAndDataClient.registerAsync(fileId,
                             function(registerResponse) {
 
                                 console.log(registerResponse);
@@ -180,7 +180,7 @@
                                                 console.log("Viewable: ");
                                                 console.log(viewable);
 
-                                                var fileId = viewDataClient.fromBase64(
+                                                var fileId = viewAndDataClient.fromBase64(
                                                         viewable.urn);
 
                                                 addThumbnail(fileId, response.file.name);
@@ -218,7 +218,7 @@
                 }
                 else {
 
-                    viewDataClient.getViewableAsync(
+                    viewAndDataClient.getViewableAsync(
                         fileId,
                         function (response) {
 
@@ -292,7 +292,7 @@
 
             parent.appendChild(document.createElement('br'));
 
-            viewDataClient.getThumbnailAsync(
+            viewAndDataClient.getThumbnailAsync(
                fileId,
                function (data) {
                    img.src = "data:image/png;base64," + data;

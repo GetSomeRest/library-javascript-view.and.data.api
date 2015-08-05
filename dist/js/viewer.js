@@ -23,10 +23,10 @@
 AutodeskNamespace("Autodesk.ADN.Toolkit.Viewer");
 
 ///////////////////////////////////////////////////////////////////////////////
-// Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory
+// Autodesk.ADN.Toolkit.Viewer.ViewerFactory
 //
 ///////////////////////////////////////////////////////////////////////////////
-Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory = function (
+Autodesk.ADN.Toolkit.Viewer.ViewerFactory = function (
     tokenOrUrl,
     factoryConfig) {
 

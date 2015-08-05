@@ -23,10 +23,10 @@
 var Autodesk = Autodesk || {};
 Autodesk.ADN = Autodesk.ADN || {};
 Autodesk.ADN.Toolkit = Autodesk.ADN.Toolkit || {};
-Autodesk.ADN.Toolkit.ViewData = Autodesk.ADN.Toolkit.ViewData || {};
+Autodesk.ADN.Toolkit.ViewAndData = Autodesk.ADN.Toolkit.ViewAndData || {};
 
 ///////////////////////////////////////////////////////////////////////////////
-// Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient
+// Autodesk.ADN.Toolkit.ViewAndData.ViewAndDataClient
 //
 // Parameters:
 //      baseUrl: url of view and data API service,
@@ -38,7 +38,7 @@ Autodesk.ADN.Toolkit.ViewData = Autodesk.ADN.Toolkit.ViewData || {};
 //                   "expires_in":1799,
 //                    "access_token":"nTeOdsiNRckNbiBF7lzdEZ3yjHRx"}
 ///////////////////////////////////////////////////////////////////////////////
-Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
+Autodesk.ADN.Toolkit.ViewAndData.ViewAndDataClient = function (
   baseUrl,
   accessTokenOrUrl) {
 
@@ -163,7 +163,7 @@ Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient = function (
 
   }, function(error) {
 
-    console.log('AdnViewDataClient error requesting token: '  + error)
+    console.log('ViewAndDataClient error requesting token: '  + error)
   });
 
   this.onInitialized = function(callback) {

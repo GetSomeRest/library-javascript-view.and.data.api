@@ -43,8 +43,8 @@
     <script  type="text/javascript" src="https://developer.api.autodesk.com/viewingservice/v1/viewers/three.min.js?v=v1.2.17"></script>
     <script  type="text/javascript" src="https://developer.api.autodesk.com/viewingservice/v1/viewers/viewer3D.min.js?v=v1.2.17"></script>
 
-    <script type='text/javascript' src='../dist/js/Autodesk.ADN.Toolkit.ViewData.js'></script>
-    <script type='text/javascript' src='../dist/js/Autodesk.ADN.Toolkit.Viewer.js'></script>
+    <script type='text/javascript' src='../dist/js/view-and-data-client.js'></script>
+    <script type='text/javascript' src='../dist/js/viewer.js'></script>
 
     <script type='text/javascript'>
 
@@ -56,7 +56,7 @@
 
         var viewer = null;
 
-        var viewDataClient = null;
+        var viewAndDataClient = null;
 
         ///////////////////////////////////////////////////////////////////////////
         //
@@ -88,13 +88,13 @@
             }
 
             //get into business
-            viewDataClient = new Autodesk.ADN.Toolkit.ViewData.AdnViewDataClient(
-                    'https://developer.api.autodesk.com',
-                    token);
+            viewAndDataClient = new Autodesk.ADN.Toolkit.ViewAndData.ViewAndDataClient(
+                'https://developer.api.autodesk.com',
+                token);
 
-            viewDataClient.onInitialized(function() {
+            viewAndDataClient.onInitialized(function() {
 
-                viewDataClient.getBucketDetailsAsync(
+                viewAndDataClient.getBucketDetailsAsync(
 
                         bucket,
 
@@ -130,7 +130,7 @@
                 policyKey: 'transient'
             }
 
-            viewDataClient.createBucketAsync(
+            viewAndDataClient.createBucketAsync(
 
                     bucketCreationData,
 
@@ -165,104 +165,104 @@
 
                 console.log('Uploading file: ' + file.name + ' ...');
 
-                viewDataClient.uploadFileAsync(
+                viewAndDataClient.uploadFileAsync(
 
-                        file,
-                        bucket,
-                        file.name,
+                    file,
+                    bucket,
+                    file.name,
 
-                        //onSuccess
-                        function (response) {
+                    //onSuccess
+                    function (response) {
 
-                            console.log('File upload successful:');
-                            console.log(response);
+                        console.log('File upload successful:');
+                        console.log(response);
 
-                            var fileId = response.objectId;
+                        var fileId = response.objectId;
 
-                            var registerResponse =
-                                    viewDataClient.register(fileId);
+                        var registerResponse =
+                                viewAndDataClient.register(fileId);
 
-                            console.log(registerResponse);
+                        console.log(registerResponse);
 
-                            if (registerResponse.Result === "Success" ||
-                                    registerResponse.Result === "Created") {
+                        if (registerResponse.Result === "Success" ||
+                                registerResponse.Result === "Created") {
 
-                                console.log("Registration result: " +
-                                registerResponse.Result);
+                            console.log("Registration result: " +
+                            registerResponse.Result);
 
-                                console.log('Starting translation: ' +
-                                fileId);
+                            console.log('Starting translation: ' +
+                            fileId);
 
-                                checkTranslationStatus(
-                                    fileId,
-                                    1000 * 60 * 5, //5 mins timeout
+                            checkTranslationStatus(
+                                fileId,
+                                1000 * 60 * 5, //5 mins timeout
 
-                                    //onSuccess
-                                    function (viewable) {
+                                //onSuccess
+                                function (viewable) {
 
-                                        console.log("Translation successful: " +
-                                        response.file.name);
+                                    console.log("Translation successful: " +
+                                    response.file.name);
 
-                                        console.log("Viewable: ");
-                                        console.log(viewable);
+                                    console.log("Viewable: ");
+                                    console.log(viewable);
 
-                                        var viewerFactoryConfig = {
+                                    var viewerFactoryConfig = {
 
-                                            environment: 'AutodeskProduction'
-                                        };
+                                        environment: 'AutodeskProduction'
+                                    };
 
-                                        var viewerConfig = {
+                                    var viewerConfig = {
 
-                                            lightPreset: 8,
-                                            viewerType: 'Viewer3D', //['Viewer3D', 'GuiViewer3D']
-                                            qualityLevel: [true, true],
-                                            navigationTool:'freeorbit',
-                                            progressiveRendering: true,
-                                            backgroundColor:[3,4,5, 250, 250, 250]
-                                        };
+                                        lightPreset: 8,
+                                        viewerType: 'Viewer3D', //['Viewer3D', 'GuiViewer3D']
+                                        qualityLevel: [true, true],
+                                        navigationTool:'freeorbit',
+                                        progressiveRendering: true,
+                                        backgroundColor:[3,4,5, 250, 250, 250]
+                                    };
 
-                                        var viewerFactory = new Autodesk.ADN.Toolkit.Viewer.AdnViewerFactory (
-                                            document.getElementById("token").value,
-                                            viewerFactoryConfig);
+                                    var viewerFactory = new Autodesk.ADN.Toolkit.Viewer.ViewerFactory (
+                                        document.getElementById("token").value,
+                                        viewerFactoryConfig);
 
-                                        viewerFactory.onInitialized (function() {
+                                    viewerFactory.onInitialized (function() {
 
-                                            viewerFactory.getViewablePath(viewable.urn,
-                                                function(pathCollection){
+                                        viewerFactory.getViewablePath(viewable.urn,
+                                            function(pathCollection){
 
-                                                    //the DOM container
-                                                    var viewerContainer = document.getElementById("viewer");
+                                                //the DOM container
+                                                var viewerContainer = document.getElementById("viewer");
 
-                                                    viewer = viewerFactory.createViewer(
-                                                            viewerContainer,
-                                                            viewerConfig);
+                                                viewer = viewerFactory.createViewer(
+                                                        viewerContainer,
+                                                        viewerConfig);
 
-                                                    //loads the first 3d or 2d path available
-                                                    if(pathCollection.path3d.length > 0) {
+                                                //loads the first 3d or 2d path available
+                                                if(pathCollection.path3d.length > 0) {
 
-                                                        viewer.load(pathCollection.path3d[0].path);
-                                                    }
+                                                    viewer.load(pathCollection.path3d[0].path);
+                                                }
 
-                                                    else if(pathCollection.path2d.length > 0) {
+                                                else if(pathCollection.path2d.length > 0) {
 
-                                                        viewer.load(pathCollection.path2d[0].path);
-                                                    }
-                                                },
-                                                function(error) {
+                                                    viewer.load(pathCollection.path2d[0].path);
+                                                }
+                                            },
+                                            function(error) {
 
-                                                    console.log(error);
-                                                });
-                                        });
+                                                console.log(error);
+                                            });
                                     });
-                            }
-                        },
+                                });
+                        }
+                    },
 
-                        //onError
-                        function (error) {
+                    //onError
+                    function (error) {
 
-                            console.log('File upload failed:');
-                            console.log(error);
-                        });
+                        console.log('File upload failed:');
+                        console.log(error);
+                    });
             }
         }
 
@@ -284,7 +284,7 @@
                 }
                 else {
 
-                    viewDataClient.getViewableAsync(
+                    viewAndDataClient.getViewableAsync(
                             fileId,
                             function (response) {
 
