@@ -4,8 +4,8 @@
   "homepage": "https://github.com/Developer-Autodesk/library-javascript-view.and.data.api",
   "authors": [
     "Balaji Ramamoorthy <balaji.ramamoorthy@autodesk.com>",
-    "Daniel Leefsma <daniel.du@autodesk.com>",
-    "Philippe Du <philippe.leefsma@autodesk.com>"
+    "Daniel Du <daniel.du@autodesk.com>",
+    "Philippe Leefsma <philippe.leefsma@autodesk.com>"
   ],
   "description": "a JavaScript library providing a high level wrapper for the Autodesk View & Data Rest API",
   "keywords": [
