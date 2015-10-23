@@ -10,18 +10,19 @@ This sample contains JavaScript libraries providing high level wrappers and feat
 
 - Autodesk.ADN.Toolkit.ViewData.js
 
-Provides a high-level wrapper to work with the View & Data REST API:
+Provides a high-level wrapper to work with the server-side View & Data REST API:
 
-    * Check existence of a bucket/Retrieve details of bucket
-    * Create new bucket
-    * Upload a file to bucket
-    * Register file for translation
-    * Check translation progress
-    * Retrieve viewable details
+- Check existence of a bucket/Retrieve details of bucket
+- Create new bucket
+- Upload a file to bucket
+- Register file for translation
+- Check translation progress
+- Retrieve viewable details
+
+Provides a high-level wrapper to work with the viewer client-side JavaScript API:
 
 - Autodesk.ADN.Toolkit.Viewer.js
 
-Provides a high-level wrapper to work with the viewer client-side JavaScript API
 
 ##Dependencies
 
@@ -87,9 +88,6 @@ None
 
 library-javascript-view.and.data.api is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT). Please see the [LICENSE](LICENSE) file for full details.
 
-##Written by 
+##Written by
 
 [Balaji Ramamoorthy](http://adndevblog.typepad.com/autocad/balaji-ramamoorthy.html), [Philippe Leefsma](http://adndevblog.typepad.com/cloud_and_mobile/philippe-leefsma.html) & [Daniel Du](http://adndevblog.typepad.com/cloud_and_mobile/daniel-du.html)
-
-
-
