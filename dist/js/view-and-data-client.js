@@ -286,6 +286,72 @@ Autodesk.ADN.Toolkit.ViewAndData.ViewAndDataClient = function (
     }
   };
 
+
+  ///////////////////////////////////////////////////////////////////////////
+  // Use:
+  // Get all buckets
+  //
+  // API:
+  // GET /oss/{apiversion}/buckets
+  //
+  // Response:
+  //
+  // {
+  //   "items": [
+  //   {
+  //     "bucketKey": "dev_portal_test-10april2016-greg",
+  //     "createDate": 1460297822493,
+  //     "policyKey": "transient"
+  //   },
+  //   {
+  //     "bucketKey": "dev_portal_test-10april2016-greg2",
+  //     "createDate": 1460321084138,
+  //     "policyKey": "temporary"
+  //   },
+  //     ...
+  // ]
+  // }
+  ///////////////////////////////////////////////////////////////////////////
+  this.getAllBucketsAsync = function(onSuccess, onError){
+    try {
+
+      var xhr = new XMLHttpRequest();
+
+      xhr.open('GET',
+          _baseUrl + "/oss/v2/buckets",
+          true);
+
+      xhr.setRequestHeader(
+          'Authorization',
+          'Bearer ' + _accessTokenResponse.access_token);
+
+      xhr.setRequestHeader(
+          'Content-Type',
+          'application/json');
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+          if(xhr.status == 200) {
+            onSuccess(JSON.parse(xhr.responseText));
+          }
+          else {
+            onError({
+              status: xhr.status,
+              description: getErrorDescription(xhr.status),
+              response:JSON.parse(xhr.responseText)
+            });
+          }
+        }
+      }
+
+      xhr.send();
+    }
+    catch (ex) {
+
+      onError(ex);
+    }
+  }
+
   ///////////////////////////////////////////////////////////////////////////
   // Use:
   // Get bucket details
