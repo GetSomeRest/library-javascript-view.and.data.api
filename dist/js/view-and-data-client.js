@@ -40,7 +40,8 @@ Autodesk.ADN.Toolkit.ViewAndData = Autodesk.ADN.Toolkit.ViewAndData || {};
 ///////////////////////////////////////////////////////////////////////////////
 Autodesk.ADN.Toolkit.ViewAndData.ViewAndDataClient = function (
   baseUrl,
-  accessTokenOrUrl) {
+  accessTokenOrUrl,
+  callback) {
 
   ///////////////////////////////////////////////////////////////////////////
   // Private Members
@@ -154,6 +155,9 @@ Autodesk.ADN.Toolkit.ViewAndData.ViewAndDataClient = function (
 
     _accessTokenResponse = response;
 
+    if (callback){
+      callback(response);
+    }
     if(_onInitialized) {
 
       _onInitialized();
