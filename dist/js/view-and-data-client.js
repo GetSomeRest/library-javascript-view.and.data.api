@@ -183,7 +183,7 @@ Autodesk.ADN.Toolkit.ViewAndData.ViewAndDataClient = function (
   }
 
   ///////////////////////////////////////////////////////////////////////////
-  // Set the cookie upon server response
+  // Set the cookie (24 hours) upon server response
   // Subsequent http requests to this domain
   // will automatically send the cookie for authentication
   //
@@ -200,7 +200,11 @@ Autodesk.ADN.Toolkit.ViewAndData.ViewAndDataClient = function (
 
     xhr.open('POST',
       _baseUrl + '/derivativeservice/v2/token',
-      false);
+      true);
+
+    xhr.setRequestHeader(
+        'Authorization',
+        'Bearer ' + _accessTokenResponse.access_token);
 
     xhr.setRequestHeader(
       'Content-Type',
