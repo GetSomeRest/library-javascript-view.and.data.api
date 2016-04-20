@@ -40,7 +40,8 @@ Autodesk.ADN.Toolkit.ViewAndData = Autodesk.ADN.Toolkit.ViewAndData || {};
 ///////////////////////////////////////////////////////////////////////////////
 Autodesk.ADN.Toolkit.ViewAndData.ViewAndDataClient = function (
   baseUrl,
-  accessTokenOrUrl) {
+  accessTokenOrUrl,
+  callback) {
 
   ///////////////////////////////////////////////////////////////////////////
   // Private Members
@@ -154,6 +155,9 @@ Autodesk.ADN.Toolkit.ViewAndData.ViewAndDataClient = function (
 
     _accessTokenResponse = response;
 
+    if (callback){
+      callback(response);
+    }
     if(_onInitialized) {
 
       _onInitialized();
@@ -179,7 +183,7 @@ Autodesk.ADN.Toolkit.ViewAndData.ViewAndDataClient = function (
   }
 
   ///////////////////////////////////////////////////////////////////////////
-  // Set the cookie upon server response
+  // Set the cookie (24 hours) upon server response
   // Subsequent http requests to this domain
   // will automatically send the cookie for authentication
   //
@@ -196,7 +200,11 @@ Autodesk.ADN.Toolkit.ViewAndData.ViewAndDataClient = function (
 
     xhr.open('POST',
       _baseUrl + '/derivativeservice/v2/token',
-      false);
+      true);
+
+    xhr.setRequestHeader(
+        'Authorization',
+        'Bearer ' + _accessTokenResponse.access_token);
 
     xhr.setRequestHeader(
       'Content-Type',
@@ -277,6 +285,72 @@ Autodesk.ADN.Toolkit.ViewAndData.ViewAndDataClient = function (
       onError(ex);
     }
   };
+
+
+  ///////////////////////////////////////////////////////////////////////////
+  // Use:
+  // Get all buckets
+  //
+  // API:
+  // GET /oss/{apiversion}/buckets
+  //
+  // Response:
+  //
+  // {
+  //   "items": [
+  //   {
+  //     "bucketKey": "dev_portal_test-10april2016-greg",
+  //     "createDate": 1460297822493,
+  //     "policyKey": "transient"
+  //   },
+  //   {
+  //     "bucketKey": "dev_portal_test-10april2016-greg2",
+  //     "createDate": 1460321084138,
+  //     "policyKey": "temporary"
+  //   },
+  //     ...
+  // ]
+  // }
+  ///////////////////////////////////////////////////////////////////////////
+  this.getAllBucketsAsync = function(onSuccess, onError){
+    try {
+
+      var xhr = new XMLHttpRequest();
+
+      xhr.open('GET',
+          _baseUrl + "/oss/v2/buckets",
+          true);
+
+      xhr.setRequestHeader(
+          'Authorization',
+          'Bearer ' + _accessTokenResponse.access_token);
+
+      xhr.setRequestHeader(
+          'Content-Type',
+          'application/json');
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+          if(xhr.status == 200) {
+            onSuccess(JSON.parse(xhr.responseText));
+          }
+          else {
+            onError({
+              status: xhr.status,
+              description: getErrorDescription(xhr.status),
+              response:JSON.parse(xhr.responseText)
+            });
+          }
+        }
+      }
+
+      xhr.send();
+    }
+    catch (ex) {
+
+      onError(ex);
+    }
+  }
 
   ///////////////////////////////////////////////////////////////////////////
   // Use:
