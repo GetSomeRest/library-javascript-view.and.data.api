@@ -31,12 +31,13 @@ Autodesk.ADN.Toolkit.ViewAndData = Autodesk.ADN.Toolkit.ViewAndData || {};
 // Parameters:
 //      baseUrl: url of view and data API service,
 //               for production environment, it is 'https://developer.api.autodesk.com'
-//      accessTokenOrUrl :  An url which returns the access token in JSON foramt,
+//      accessTokenOrUrl :  An url which returns the access token in JSON format,
 //              for example: http://still-spire-1606.herokuapp.com/api/rawtoken,
 //              it returns token  like :
 //                  {"token_type":"Bearer",
 //                   "expires_in":1799,
 //                    "access_token":"nTeOdsiNRckNbiBF7lzdEZ3yjHRx"}
+//      callback (Optional): A callback function where you can get the access token in JSON format
 ///////////////////////////////////////////////////////////////////////////////
 Autodesk.ADN.Toolkit.ViewAndData.ViewAndDataClient = function (
   baseUrl,
